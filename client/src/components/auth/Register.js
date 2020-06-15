@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { Link, Redirect } from "react-router-dom";
 import { setAlert } from "../../actions/alert";
 import { register } from "../../actions/auth";
+import TopNavUnAuthed from '../layout/TopNavUnAuthed'
 import PropTypes from "prop-types";
 
 const Register = ({ setAlert, register, isAuthenticated }) => {
@@ -47,6 +48,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
 
     return (
         <Fragment>
+            <TopNavUnAuthed />
             <div className="header bg-gradient-primary py-7 py-lg-8">
                 <div className="container">
                     <div className="header-body text-center mb-7">

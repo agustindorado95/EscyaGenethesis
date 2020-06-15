@@ -12,7 +12,11 @@ const initialState = {
     token: localStorage.getItem("token"),
     isAuthenticated: false,
     loading: true,
-    user: null,
+    user: {
+        firstName: '加载中...',
+        lastName: '',
+        avatar: 'default.jpg'
+    },
 };
 
 export default (state = initialState, action) => {
@@ -44,7 +48,11 @@ export default (state = initialState, action) => {
                 token: null,
                 isAuthenticated: false,
                 loading: false,
-                user: null,
+                user: {
+                    firstName: '',
+                    lastName: '',
+                    avatar: 'default.jpg'
+                },
             };
 
         default:

@@ -1,15 +1,17 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
+import LeftNav from "./LeftNav";
+import TopNav from "./TopNav";
 
 const Dashboard = ({ auth: { user } }) => {
     return (
         <Fragment>
-            <h1 className="large text-primary">Dashboard</h1>
-            <p className="lead">
-                <i className="fal fa-user"></i>
-                {user && `${user.firstName} ${user.lastName}`}
-            </p>
+            <LeftNav />
+            <div className="main-content">
+                <TopNav />
+                
+            </div>
         </Fragment>
     );
 };
