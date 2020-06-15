@@ -6,96 +6,132 @@ import { logout } from "../../actions/auth";
 
 const Navbar = ({ logout, auth: { isAuthenticated, loading, user } }) => {
     const userLinks = (
-        <ul className="nav navbar-nav ml-auto w-100 justify-content-end">
+        <Fragment>
             <li className="nav-item">
-                <span className="navbar-text">
-                    Welcome, {user && user.firstName}
-                </span>
+                <div className="nav-link nav-link-icon">
+                    <span className="nav-link-inner--text">
+                        欢迎回来, {user && user.firstName}
+                    </span>
+                </div>
             </li>
             <li className="nav-item">
-                <a href="#!" onClick={logout} className="nav-link">
+                <a
+                    href="#!"
+                    onClick={logout}
+                    className="nav-link nav-link-icon"
+                >
                     <i className="fal fa-sign-out-alt"></i>
-                    <span className="hide-sm">Logout</span>
+                    <span className="nav-link-inner--text">注销</span>
                 </a>
             </li>
-        </ul>
+        </Fragment>
     );
 
     const guestLinks = (
-        <ul className="nav navbar-nav ml-auto w-100 justify-content-end">
-            <Link to="/register" className="nav-link">
-                Register
-            </Link>
-            <Link to="/login" className="nav-link">
-                Login
-            </Link>
-        </ul>
+        <Fragment>
+            <li className="nav-item">
+                <Link className="nav-link nav-link-icon" to="/register">
+                    <i className="fas fa-user-circle"></i>
+                    <span className="nav-link-inner--text">注册</span>
+                </Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link nav-link-icon" to="/login">
+                    <i className="fas fa-key"></i>
+                    <span className="nav-link-inner--text">登陆</span>
+                </Link>
+            </li>
+        </Fragment>
     );
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a className="navbar-brand" href="#">
-                Genethesis
-            </a>
-            <button
-                className="navbar-toggler"
-                type="button"
-                data-toggle="collapse"
-                data-target="#topNavbar"
-                aria-controls="topNavbar"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <span className="navbar-toggler-icon"></span>
-            </button>
+        <nav className="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark">
+            <div className="container px-4">
+                <Link className="navbar-brand" to="/">
+                    <img
+                        src={process.env.PUBLIC_URL + "/img/brand/white.png"}
+                        alt="brand"
+                    />
+                </Link>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#navbar-collapse-main"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div
+                    className="collapse navbar-collapse"
+                    id="navbar-collapse-main"
+                >
+                    <div className="navbar-collapse-header d-md-none">
+                        <div className="row">
+                            <div className="col-6 collapse-brand">
+                                <Link to="/">
+                                    <img
+                                        src={
+                                            process.env.PUBLIC_URL +
+                                            "/img/brand/blue.png"
+                                        }
+                                        alt="brand"
+                                    />
+                                </Link>
+                            </div>
 
-            <div className="collapse navbar-collapse" id="topNavbar">
-                <ul className="navbar-nav mr-auto">
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">
-                            Home
-                        </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">
-                            Link
-                        </a>
-                    </li>
-                    <li className="nav-item dropdown">
-                        <a
-                            className="nav-link dropdown-toggle"
-                            href="#"
-                            id="navbarDropdown"
-                            role="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                        >
-                            Dropdown
-                        </a>
-                        <div
-                            className="dropdown-menu"
-                            aria-labelledby="navbarDropdown"
-                        >
-                            <a className="dropdown-item" href="#">
-                                Action
-                            </a>
-                            <a className="dropdown-item" href="#">
-                                Another action
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a className="dropdown-item" href="#">
-                                Something else here
-                            </a>
+                            <div className="col-6 collapse-close">
+                                <button
+                                    type="button"
+                                    className="navbar-toggler"
+                                    data-toggle="collapse"
+                                    data-target="#navbar-collapse-main"
+                                    aria-controls="sidenav-main"
+                                    aria-expanded="false"
+                                    aria-label="Toggle sidenav"
+                                >
+                                    <span></span>
+                                    <span></span>
+                                </button>
+                            </div>
                         </div>
-                    </li>
-                </ul>
-
-                {!loading && (
-                    <Fragment>
-                        {isAuthenticated ? userLinks : guestLinks}
-                    </Fragment>
-                )}
+                    </div>
+                    <ul className="navbar-nav">
+                        <li className="nav-item">
+                            <a
+                                className="nav-link nav-link-icon"
+                                href="#!"
+                                data-toggle="modal"
+                                data-target="#privacyModal"
+                            >
+                                <i className="fas fa-question-circle"></i>
+                                <span className="nav-link-inner--text">
+                                    用户须知
+                                </span>
+                            </a>
+                        </li>
+                        <li className="nav-item">
+                            <a
+                                className="nav-link nav-link-icon"
+                                href="https://github.com/agustindorado95/Genethesis/issues"
+                            >
+                                <i className="fas fa-comment"></i>
+                                <span className="nav-link-inner--text">
+                                    问题反馈
+                                </span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul className="navbar-nav ml-auto">
+                        {!loading && (
+                            <Fragment>
+                                {isAuthenticated ? userLinks : guestLinks}
+                            </Fragment>
+                        )}
+                    </ul>
+                </div>
             </div>
         </nav>
     );

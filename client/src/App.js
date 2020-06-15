@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Alert from "./components/layout/Alert";
 import Navbar from "./components/layout/Navbar";
+import Modals from "./components/layout/Modals";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
@@ -30,7 +31,8 @@ const App = () => {
             <Router>
                 <Fragment>
                     <Navbar />
-                    <section className="container">
+                    <section>
+                        <Modals />
                         <Alert />
                         <Switch>
                             <Route
