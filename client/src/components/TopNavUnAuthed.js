@@ -5,7 +5,7 @@ import PropTypes from "prop-types";
 
 const TopNavUnAuthed = () => {
     return (
-        <nav className="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark">
+        <nav className="navbar navbar-top navbar-horizontal navbar-expand-md navbar-dark bg-default">
             <div className="container px-4">
                 <Link className="navbar-brand" to="/">
                     <img

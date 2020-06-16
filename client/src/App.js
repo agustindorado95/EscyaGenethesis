@@ -6,13 +6,12 @@ import {
     Redirect,
 } from "react-router-dom";
 
-import Alert from "./components/layout/Alert";
-import Modals from "./components/layout/Modals";
-import Loader from "./components/layout/Loader";
+import Alert from "./components/Alert";
+import Modals from "./components/Modals";
+import Login from "./components/layouts/Login";
+import Register from "./components/layouts/Register";
+import Dashboard from "./components/layouts/Dashboard";
 import PrivateRoute from "./components/routing/PrivateRoute";
-import Login from "./components/auth/Login";
-import Register from "./components/auth/Register";
-import Dashboard from "./components/layout/Dashboard";
 import { loadUser } from "./actions/auth";
 import setAuthToken from "./utils/setAuthToken";
 import "./App.css";
@@ -34,17 +33,11 @@ const App = () => {
         <Provider store={store}>
             <Router>
                 <Fragment>
-                    <Loader />
                     <Modals />
                     <Switch>
                         <Route exact path="/register" component={Register} />
                         <Route exact path="/login" component={Login} />
-                        <PrivateRoute
-                            exact
-                            path="/dashboard"
-                            component={Dashboard}
-                        />
-                        <Redirect from="/" to="/dashboard" />
+                        <PrivateRoute component={Dashboard} />
                     </Switch>
                     <Alert />
                 </Fragment>

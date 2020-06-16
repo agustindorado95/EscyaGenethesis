@@ -1,53 +1,75 @@
 .lds-facebook-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
-  background-color: rgba(0,0,0,0.5);
-  z-index: 99;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 99;
 }
 .lds-facebook {
-  display: inline-block;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 80px;
-  height: 80px;
+    display: inline-block;
+    position: absolute;
+    left: calc(50% + 125px);
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
 }
 .lds-facebook div {
-  display: inline-block;
-  position: absolute;
-  left: 8px;
-  width: 16px;
-  background: #fff;
-  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    display: inline-block;
+    position: absolute;
+    left: 8px;
+    width: 16px;
+    background: #fff;
+    animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
 }
 .lds-facebook div:nth-child(1) {
-  left: 8px;
-  animation-delay: -0.24s;
+    left: 8px;
+    animation-delay: -0.24s;
 }
 .lds-facebook div:nth-child(2) {
-  left: 32px;
-  animation-delay: -0.12s;
+    left: 32px;
+    animation-delay: -0.12s;
 }
 .lds-facebook div:nth-child(3) {
-  left: 56px;
-  animation-delay: 0;
+    left: 56px;
+    animation-delay: 0;
 }
 @keyframes lds-facebook {
-  0% {
-      top: 8px;
-      height: 64px;
-  }
-  50%,
-  100% {
-      top: 24px;
-      height: 32px;
-  }
+    0% {
+        top: 8px;
+        height: 64px;
+    }
+    50%,
+    100% {
+        top: 24px;
+        height: 32px;
+    }
+}
+@media (max-width: 768px)
+{
+    .lds-facebook
+    {
+        left: 50%;
+    }
 }
 
 #sidenav-main {
-  overflow-x: hidden;
+    overflow-x: hidden;
+}
+
+.header {
+    min-height: 200px;
+    background-image: url("images/banner_background.jpg");
+    background-size: cover;
+    background-position: center top;
+}
+
+.auth-bg {
+    background-color: #172b4d !important;
+    top:0;
+    left:0;
+    min-height:"100vh";
+    width:"100vw"
 }

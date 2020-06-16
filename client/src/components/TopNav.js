@@ -1,12 +1,11 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { logout } from "../../actions/auth";
+import { logout } from "../actions/auth";
 
 const TopNav = ({ logout, auth: { user } }) => {
-
     return (
-        <div className="main-content">
+        <Fragment>
             <nav
                 className="navbar navbar-top navbar-expand-md navbar-dark"
                 id="navbar-main"
@@ -51,13 +50,15 @@ const TopNav = ({ logout, auth: { user } }) => {
                                             alt="Avatar"
                                             src={
                                                 process.env.PUBLIC_URL +
-                                                "/avatars/" + user.avatar
+                                                "/avatars/" +
+                                                user.avatar
                                             }
                                         />
                                     </span>
                                     <div className="media-body ml-2 d-none d-lg-block">
                                         <span className="mb-0 text-sm  font-weight-bold">
-                                            {user.lastName}{user.firstName}
+                                            {user.lastName}
+                                            {user.firstName}
                                         </span>
                                     </div>
                                 </div>
@@ -104,7 +105,10 @@ const TopNav = ({ logout, auth: { user } }) => {
                     </ul>
                 </div>
             </nav>
-        </div>
+            <div className="header pb-8 pt-5 pt-lg-8 d-flex align-items-center">
+                <span className="mask bg-gradient-default opacity-8"></span>
+            </div>
+        </Fragment>
     );
 };
 
