@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { logout } from "../actions/auth";
 
-const TopNav = ({ logout, auth: { user } }) => {
+const TopNav = ({ logout, auth: { user }, section }) => {
     return (
         <Fragment>
             <nav
@@ -15,7 +15,7 @@ const TopNav = ({ logout, auth: { user } }) => {
                         className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
                         href="{{ url_for('main.index') }}"
                     >
-                        #SectionTitle
+                        {section}
                     </a>
                     <div className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
                         <div className="form-group mb-0">
@@ -69,13 +69,6 @@ const TopNav = ({ logout, auth: { user } }) => {
                                         欢迎回来！
                                     </h6>
                                 </div>
-                                <a
-                                    href="{{ url_for('users.profile') }}"
-                                    className="dropdown-item"
-                                >
-                                    <i className="ni ni-single-02"></i>
-                                    <span>我的信息</span>
-                                </a>
                                 <a href="#!" className="dropdown-item disabled">
                                     <i className="ni ni-settings-gear-65"></i>
                                     <span>偏好设置</span>
@@ -117,6 +110,7 @@ TopNav.propTypes = {
     auth: PropTypes.object.isRequired,
 };
 const mapStateToProps = (state) => ({
+    section: state.section,
     auth: state.auth,
 });
 export default connect(mapStateToProps, { logout })(TopNav);

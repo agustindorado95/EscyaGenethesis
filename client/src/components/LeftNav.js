@@ -1,14 +1,22 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { logout } from "../actions/auth";
+import { setSection } from "../actions/section";
 
-const LeftNav = ({ logout, auth: { user } }) => {
+const LeftNav = ({ logout, setSection, auth: { user } }) => {
+    const changeActiveSection = (e) => {
+        e.target.parentNode.parentNode.childNodes.forEach(elem=>elem.childNodes[0].classList.remove('active'))
+        e.target.classList.add('active')
+        setSection(e.target.dataset.section)
+    };
+
     return (
         <nav
             className="navbar navbar-vertical fixed-left navbar-expand-md navbar-light bg-white"
             id="sidenav-main"
-            style={{zIndex:999}}
+            style={{ zIndex: 999 }}
         >
             <div className="container-fluid">
                 <button
@@ -32,121 +40,10 @@ const LeftNav = ({ logout, auth: { user } }) => {
                 <div className="text-center d-none d-md-block">
                     <span className="badge badge-danger alpha">Dev 0.0.1</span>
                 </div>
-                <div className="text-center d-none d-md-block">
-                    <span className="badge badge-danger alpha">{user.firstName}</span>
-                </div>
-                <ul className="nav align-items-center d-md-none">
-                    <li className="nav-item dropdown">
-                        <a
-                            className="nav-link"
-                            href="#"
-                            role="button"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                        >
-                            <div className="media align-items-center">
-                                <span className="avatar avatar-sm rounded-circle">
-                                    <img
-                                        alt="Avatar"
-                                        src={
-                                            process.env.PUBLIC_URL +
-                                            "/avatars/" +
-                                            user.avatar
-                                        }
-                                    />
-                                </span>
-                            </div>
-                        </a>
-                        <div className="dropdown-menu dropdown-menu-arrow dropdown-menu-right">
-                            <div className=" dropdown-header noti-title">
-                                <h6 className="text-overflow m-0">
-                                    欢迎回来, {user.firstName}
-                                </h6>
-                            </div>
-                            <a
-                                href="{{ url_for('users.profile') }}"
-                                className="dropdown-item"
-                            >
-                                <i className="ni ni-single-02"></i>
-                                <span>我的信息</span>
-                            </a>
-                            <a href="#!" className="dropdown-item disabled">
-                                <i className="ni ni-settings-gear-65"></i>
-                                <span>偏好设置</span>
-                            </a>
-                            <a href="#!" className="dropdown-item disabled">
-                                <i className="ni ni-calendar-grid-58"></i>
-                                <span>历史记录</span>
-                            </a>
-                            <a
-                                href="https://github.com/agustindorado95/EscyaGenethesis"
-                                className="dropdown-item"
-                            >
-                                <i className="ni ni-support-16"></i>
-                                <span>支持该项目</span>
-                            </a>
-                            <div className="dropdown-divider"></div>
-                            <a
-                                href="!#"
-                                onClick={logout}
-                                className="dropdown-item"
-                            >
-                                <i className="ni ni-user-run"></i>
-                                <span>登出</span>
-                            </a>
-                        </div>
-                    </li>
-                </ul>
                 <div
                     className="collapse navbar-collapse"
                     id="sidenav-collapse-main"
                 >
-                    <div className="navbar-collapse-header d-md-none">
-                        <div className="row">
-                            <div className="col-6 collapse-brand">
-                                <a href="/">
-                                    <img
-                                        src={
-                                            process.env.PUBLIC_URL +
-                                            "/img/brand/blue.png"
-                                        }
-                                        alt="brand"
-                                    />
-                                </a>
-                            </div>
-                            <div className="col-6 collapse-close">
-                                <button
-                                    type="button"
-                                    className="navbar-toggler"
-                                    data-toggle="collapse"
-                                    data-target="#sidenav-collapse-main"
-                                    aria-controls="sidenav-main"
-                                    aria-expanded="false"
-                                    aria-label="Toggle sidenav"
-                                >
-                                    <span></span>
-                                    <span></span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="mt-4 mb-3 d-md-none">
-                        <div className="input-group input-group-rounded input-group-merge">
-                            <input
-                                id="search-field-2"
-                                type="search"
-                                className="form-control form-control-rounded form-control-prepended search-field"
-                                placeholder="搜索..."
-                                aria-label="Search"
-                            />
-                            <div className="input-group-prepend">
-                                <div className="input-group-text">
-                                    <span className="fa fa-search"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                     <ul className="navbar-nav">
                         <li className="nav-item">
                             <a
@@ -176,16 +73,24 @@ const LeftNav = ({ logout, auth: { user } }) => {
                             </a>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/about">
+                            <Link
+                                className="nav-link"
+                                onClick={changeActiveSection}
+                                to="/about" data-section="关于作者"
+                            >
                                 <i className="fas fa-glasses text-success"></i>
                                 关于作者
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" href="/readme">
+                            <Link
+                                className="nav-link"
+                                onClick={changeActiveSection}
+                                to="/readme"  data-section="用户须知"
+                            >
                                 <i className="fas fa-file-alt text-info"></i>
                                 用户须知
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link" href="!#" onClick={logout}>
@@ -233,9 +138,10 @@ const LeftNav = ({ logout, auth: { user } }) => {
 
 LeftNav.propTypes = {
     logout: PropTypes.func.isRequired,
+    setSection: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired,
 };
 const mapStateToProps = (state) => ({
     auth: state.auth,
 });
-export default connect(mapStateToProps, { logout })(LeftNav);
+export default connect(mapStateToProps, { logout, setSection })(LeftNav);
