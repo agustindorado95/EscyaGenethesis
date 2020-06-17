@@ -4,7 +4,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const upload = multer({ dest: "uploads/" });
-const Jimp = require("jimp");
+const Jimp = require("Jimp");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const config = require("config");
@@ -13,7 +13,7 @@ const { validationResult } = require("express-validator");
 const {
     registerCheck,
     loginCheck,
-    profileCheck,
+    userProfileCheck,
     passwordChangeCheck,
 } = require("../../middleware/validators");
 const userRequired = require("../../middleware/tokenVarifier");
@@ -39,7 +39,7 @@ router.post("/register", registerCheck, async (req, res) => {
                 errors: [
                     {
                         msg: "Email already registered.",
-                        field: "email",
+                        param: "email",
                         location: "body",
                     },
                 ],
@@ -105,7 +105,7 @@ router.post("/login", loginCheck, async (req, res) => {
                 errors: [
                     {
                         msg: "User does not exist.",
-                        field: "email",
+                        param: "email",
                         location: "body",
                     },
                 ],
@@ -119,7 +119,7 @@ router.post("/login", loginCheck, async (req, res) => {
                 errors: [
                     {
                         msg: "Incorrect password.",
-                        field: "password",
+                        param: "password",
                         location: "body",
                     },
                 ],
@@ -150,8 +150,9 @@ router.post("/login", loginCheck, async (req, res) => {
 // @route    POST api/users/me
 // @func     User profile update
 // @access   Private
-router.post("/me", [userRequired, profileCheck], async (req, res) => {
+router.post("/me", [userRequired, userProfileCheck], async (req, res) => {
     const errors = validationResult(req);
+    console.log(errors)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
@@ -167,13 +168,13 @@ router.post("/me", [userRequired, profileCheck], async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
         if (email != user.email) {
-            const duplicate = await User.findOne({email})
+            const duplicate = await User.findOne({ email });
             if (duplicate) {
                 return res.status(400).json({
                     errors: [
                         {
                             msg: "该邮箱已经被其他用户注册，请更换。",
-                            field: "email",
+                            param: "email",
                             location: "body",
                         },
                     ],
@@ -202,25 +203,24 @@ router.post(
     [userRequired, upload.single("avatar")],
     async (req, res) => {
         try {
-            const randomFN = uuidv4() + path.extname(req.file.filename);
+            const randomFN = uuidv4() + '.jpg';
             const avatarPath = "./client/public/avatars/" + randomFN;
-            Jimp.read(req.file.path, (err, file) => {
-                if (err) throw err;
-                file.resize(360, Jimp.AUTO) // resize
-                    .quality(60) // set JPEG quality
-                    .write(avatarPath); // save
+            const img = await Jimp.read(req.file.path).catch(() => {
+                fs.unlinkSync(req.file.path);
+                throw "这恐怕不是一只图片……";
             });
+            img.resize(360, Jimp.AUTO).quality(60).write(avatarPath);
             const user = await User.findById(req.user.id);
-            if (user.avatar != "default.jpg") {
-                fs.unlink("./client/public/avatars/" + user.avatar);
+            const oldAvatarPath = "./client/public/avatars/" + user.avatar;
+            if (user.avatar != "default.jpg" && fs.existsSync(oldAvatarPath)) {
+                fs.unlinkSync(oldAvatarPath);
             }
             user.avatar = randomFN;
             await user.save();
-            fs.unlink(req.file.path);
+            fs.unlinkSync(req.file.path);
             return res.status(200).send("Success.");
         } catch (error) {
-            console.log(error.message);
-            return res.status(500).send("Internal server error.");
+            return res.status(500).send(error);
         }
     }
 );
@@ -233,25 +233,24 @@ router.post(
     [userRequired, upload.single("signature")],
     async (req, res) => {
         try {
-            const randomFN = uuidv4() + path.extname(req.file.filename);
+            const randomFN = uuidv4() + '.jpg';
             const signaturePath = "./client/public/signatures/" + randomFN;
-            Jimp.read(req.file.path, (err, file) => {
-                if (err) throw err;
-                file.resize(360, Jimp.AUTO) // resize
-                    .quality(60) // set JPEG quality
-                    .write(signaturePath); // save
+            const img = await Jimp.read(req.file.path).catch(() => {
+                fs.unlinkSync(req.file.path);
+                throw "这恐怕不是一只图片……";
             });
+            img.resize(360, Jimp.AUTO).quality(60).write(signaturePath);
             const user = await User.findById(req.user.id);
-            if (user.signature) {
-                fs.unlink("./client/public/signatures/" + user.signature);
+            const oldSignaturePath = "./client/public/signatures/" + user.signature;
+            if (user.avatar != "default.jpg" && fs.existsSync(oldSignaturePath)) {
+                fs.unlinkSync(oldSignaturePath);
             }
             user.signature = randomFN;
             await user.save();
-            fs.unlink(req.file.path);
+            fs.unlinkSync(req.file.path);
             return res.status(200).send("Success.");
         } catch (error) {
-            console.log(error.message);
-            return res.status(500).send("Internal server error.");
+            return res.status(500).send(error);
         }
     }
 );
@@ -265,7 +264,7 @@ router.post(
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).json({ errors: errors.array() });
+            return res.status(400).send({ errors: errors.array() });
         }
         const { oldPassword, newPassword } = req.body;
         try {
@@ -275,8 +274,8 @@ router.post(
                 return res.status(403).json({
                     errors: [
                         {
-                            msg: "Incorrect password.",
-                            field: "password",
+                            msg: "旧密码输入错误。",
+                            param: "oldPassword",
                             location: "body",
                         },
                     ],

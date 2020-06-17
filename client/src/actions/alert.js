@@ -11,11 +11,11 @@ export const setAlert = (msg, alertType) => (dispatch) => {
     setTimeout(() => dispatch({ type: REMOVE_ALERT, payload: id }), 1);
 };
 
-export const setAlertInForm = (msg, field) => (dispatch) => {
+export const setAlertInForm = (msg, param) => (dispatch) => {
     const id = uuidv4();
     dispatch({
         type: SET_ALERT_IN_FORM,
-        payload: { msg, field, id, inForm:true },
+        payload: { msg, param, id, inForm:true },
     });
 };
 

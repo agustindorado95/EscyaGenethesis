@@ -18,7 +18,7 @@ export const loadUser = () => async (dispatch) => {
     }
     try {
         dispatch({
-            type: USER_LOADING
+            type: USER_LOADING,
         });
         const res = await axios.get("/api/users/load");
         dispatch({
@@ -82,19 +82,88 @@ export const logout = () => (dispatch) => {
     });
 };
 
-export const updateProfile = ({ email, firstName, lastName, university, faculty, grade, selfIntro }) => async (
-    dispatch
-) => {
+export const updateProfile = ({
+    email,
+    firstName,
+    lastName,
+    university,
+    faculty,
+    grade,
+    selfIntro,
+}) => async (dispatch) => {
     const config = { headers: { "Content-Type": "application/json" } };
-    const body = JSON.stringify({ email, firstName, lastName, university, faculty, grade, selfIntro });
+    const body = JSON.stringify({
+        email,
+        firstName,
+        lastName,
+        university,
+        faculty,
+        grade,
+        selfIntro,
+    });
     try {
         await axios.post("/api/users/me", body, config);
-        dispatch(setAlert('用户信息已经成功修改。', "success"))
+        dispatch(setAlert("用户信息已经成功修改。", "success"));
         dispatch(loadUser());
     } catch (error) {
         const errors = error.response.data.errors;
         if (errors) {
-            errors.forEach((err) => dispatch(setAlertInForm(err.msg, err.field)));
+            errors.forEach((err) =>
+                dispatch(setAlertInForm(err.msg, err.param))
+            );
         }
     }
+};
+
+export const changePassword = ({ oldPassword, newPassword }) => async (
+    dispatch
+) => {
+    const config = { headers: { "Content-Type": "application/json" } };
+    const body = JSON.stringify({ oldPassword, newPassword });
+    try {
+        await axios.post("/api/users/me/password", body, config);
+        dispatch(setAlert("用户密码已经成功修改，请重新登录。", "success"));
+        dispatch(logout());
+    } catch (error) {
+        const errors = error.response.data.errors;
+        if (errors) {
+            errors.forEach((err) =>
+                dispatch(setAlert(err.msg, 'danger'))
+            );
+        }
+    }
+};
+
+export const uploadAvatar = ({ avatar }) => async (dispatch) => {
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+    const body = new FormData();
+    body.append("avatar", avatar);
+    try {
+        dispatch({
+            type: USER_LOADING,
+        });
+        await axios.post("/api/users/me/avatar", body, config);
+        dispatch(setAlert("用户头像已经成功修改。", "success"));
+    } catch (error) {
+        const err = error.response.data;
+        dispatch(setAlert(err, "danger"));
+    }
+    dispatch(loadUser());
+};
+
+export const uploadSignature = ({ signature }) => async (dispatch) => {
+    const config = { headers: { "Content-Type": "multipart/form-data" } };
+    const body = new FormData();
+    body.append("signature", signature);
+    try {
+        dispatch({
+            type: USER_LOADING,
+        });
+        await axios.post("/api/users/me/signature", body, config);
+        dispatch(setAlert("用户签名已经成功修改。", "success"));
+    } catch (error) {
+        const err = error.response.data;
+        dispatch(setAlert(err, "danger"));
+    }
+    dispatch(loadUser());
 };

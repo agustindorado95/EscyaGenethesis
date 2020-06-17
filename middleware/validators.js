@@ -44,18 +44,17 @@ const articleSettingsCheck = [
     check("bodyIndent", "Body First Line Indent is required.").exists()
 ]
 
-const profileCheck = [
-    check("firstName", "First Name is required.").exists(),
-    check("lastName", "Last Name is required.").exists(),
-    check("university", "University is required.").exists(),
-    check("faculty", "Faculty is required.").exists(),
-    check("grade", "Grade is required.").exists(),
-    check("selfIntro", "Self Introduction is required.").exists(),
+const userProfileCheck = [
+    check("firstName", "请输入您的姓。").isLength({min:1}),
+    check("lastName", "请输入您的名。").isLength({min:1}),
+    check("university", "请输入大学名称。").isLength({min:1}),
+    check("faculty", "请输入院系名称。").isLength({min:1}),
+    check("grade", "请输入年级。").isLength({min:1}),
 ]
 
 const passwordChangeCheck = [
-    check("oldPassword", "Old Password is required.").exists(),
-    check("newPassword", "New Password must be at least 6 digits.").isLength({
+    check("oldPassword", "请输入旧密码。").exists(),
+    check("newPassword", "新密码至少为6位。").isLength({
         min: 6,
     }),
 ]
@@ -65,6 +64,6 @@ module.exports = {
     loginCheck,
     articleCheck,
     articleSettingsCheck,
-    profileCheck,
+    userProfileCheck,
     passwordChangeCheck
 };
