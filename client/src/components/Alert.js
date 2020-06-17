@@ -2,12 +2,11 @@ import { useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-const Alert = ({ alerts }) =>
-    alerts !== null &&
-    alerts.length > 0 &&
-    alerts.map((alert) => {
-        useEffect(()=>{
-            const code =`$.notify(
+const Alert = ({ alerts }) => {
+    if (alerts !== null && alerts.length > 0) {
+        useEffect(() => {
+            alerts.filter((alert)=>!alert.inForm).map((alert) => {
+                const code = `$.notify(
                 {
                     message: '${alert.msg}'
                 },
@@ -22,14 +21,16 @@ const Alert = ({ alerts }) =>
                         y: 20,
                     },
                 }
-            )`
-            // Calling eval() on string function is inefficient, 
-            // but I currently don't see any workaround.
-            // eslint-disable-next-line
-            new Function(code)();
-        }, [])
-        return ('')
-    });
+            )`;
+                // Calling eval() on string function is inefficient,
+                // but I currently don't see any workaround.
+                // eslint-disable-next-line
+                return new Function(code)();
+            });
+        }, []);
+    }
+    return null
+};
 
 Alert.propTypes = {
     alerts: PropTypes.array.isRequired,

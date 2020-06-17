@@ -1,10 +1,15 @@
 export const SET_ALERT = "SET_ALERT";
+export const SET_ALERT_IN_FORM = "SET_ALERT_IN_FORM";
+export const CLEAR_ALERT = "CLEAR_ALERT";
 export const REMOVE_ALERT = "REMOVE_ALERT";
 export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
 export const REGISTER_FAIL = "REGISTER_FAIL";
+export const USER_LOADING = "USER_LOADING";
 export const USER_LOADED = "USER_LOADED";
 export const AUTH_FAIL = "AUTH_FAIL";
 export const LOGIN_SUCCESS = "LOGIN_SUCCESS";
 export const LOGIN_FAIL = "LOGIN_FAIL";
 export const LOGOUT = "LOGOUT";
 export const SET_SECTION = "SET_SECTION";
+export const UPDATE_PROFILE_SUCCESS = "UPDATE_PROFILE";
+export const UPDATE_PROFILE_FAIL = "UPDATE_PROFILE_FAIL";

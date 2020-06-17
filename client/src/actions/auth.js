@@ -1,9 +1,10 @@
 import axios from "axios";
-import { setAlert } from "./alert";
+import { setAlert, setAlertInForm } from "./alert";
 import {
     REGISTER_SUCCESS,
     REGISTER_FAIL,
     USER_LOADED,
+    USER_LOADING,
     AUTH_FAIL,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
@@ -16,6 +17,9 @@ export const loadUser = () => async (dispatch) => {
         setAuthToken(localStorage.token);
     }
     try {
+        dispatch({
+            type: USER_LOADING
+        });
         const res = await axios.get("/api/users/load");
         dispatch({
             type: USER_LOADED,
@@ -76,4 +80,21 @@ export const logout = () => (dispatch) => {
     dispatch({
         type: LOGOUT,
     });
+};
+
+export const updateProfile = ({ email, firstName, lastName, university, faculty, grade, selfIntro }) => async (
+    dispatch
+) => {
+    const config = { headers: { "Content-Type": "application/json" } };
+    const body = JSON.stringify({ email, firstName, lastName, university, faculty, grade, selfIntro });
+    try {
+        await axios.post("/api/users/me", body, config);
+        dispatch(setAlert('用户信息已经成功修改。', "success"))
+        dispatch(loadUser());
+    } catch (error) {
+        const errors = error.response.data.errors;
+        if (errors) {
+            errors.forEach((err) => dispatch(setAlertInForm(err.msg, err.field)));
+        }
+    }
 };

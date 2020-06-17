@@ -2,6 +2,7 @@ import {
     REGISTER_SUCCESS,
     REGISTER_FAIL,
     USER_LOADED,
+    USER_LOADING,
     AUTH_FAIL,
     LOGIN_SUCCESS,
     LOGIN_FAIL,
@@ -15,7 +16,8 @@ const initialState = {
     user: {
         firstName: '加载中...',
         lastName: '',
-        avatar: 'default.jpg'
+        avatar: 'default.jpg',
+        timeCreated: new Date()
     },
 };
 
@@ -30,6 +32,12 @@ export default (state = initialState, action) => {
                 ...payload,
                 isAuthenticated: true,
                 loading: false,
+            };
+        case USER_LOADING:
+            return {
+                ...state,
+                isAuthenticated: true,
+                loading: true,
             };
         case USER_LOADED:
             return {

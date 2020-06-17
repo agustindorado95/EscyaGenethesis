@@ -39,7 +39,7 @@ router.post("/register", registerCheck, async (req, res) => {
                 errors: [
                     {
                         msg: "Email already registered.",
-                        param: "email",
+                        field: "email",
                         location: "body",
                     },
                 ],
@@ -105,7 +105,7 @@ router.post("/login", loginCheck, async (req, res) => {
                 errors: [
                     {
                         msg: "User does not exist.",
-                        param: "email",
+                        field: "email",
                         location: "body",
                     },
                 ],
@@ -119,7 +119,7 @@ router.post("/login", loginCheck, async (req, res) => {
                 errors: [
                     {
                         msg: "Incorrect password.",
-                        param: "password",
+                        field: "password",
                         location: "body",
                     },
                 ],
@@ -156,6 +156,7 @@ router.post("/me", [userRequired, profileCheck], async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     const {
+        email,
         firstName,
         lastName,
         university,
@@ -165,6 +166,20 @@ router.post("/me", [userRequired, profileCheck], async (req, res) => {
     } = req.body;
     try {
         const user = await User.findById(req.user.id).select("-password");
+        if (email != user.email) {
+            const duplicate = await User.findOne({email})
+            if (duplicate) {
+                return res.status(400).json({
+                    errors: [
+                        {
+                            msg: "该邮箱已经被其他用户注册，请更换。",
+                            field: "email",
+                            location: "body",
+                        },
+                    ],
+                });
+            }
+        }
         user.firstName = firstName;
         user.lastName = lastName;
         user.university = university;
@@ -261,7 +276,7 @@ router.post(
                     errors: [
                         {
                             msg: "Incorrect password.",
-                            param: "password",
+                            field: "password",
                             location: "body",
                         },
                     ],

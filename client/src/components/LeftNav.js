@@ -46,13 +46,14 @@ const LeftNav = ({ logout, setSection, auth: { user } }) => {
                 >
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <a
-                                className="nav-link"
-                                href="{{ url_for('users.profile') }}"
+                            <Link
+                                className="nav-link active"
+                                onClick={changeActiveSection}
+                                to="/profile" data-section="我的信息"
                             >
                                 <i className="fas fa-user text-blue"></i>
                                 我的信息
-                            </a>
+                            </Link>
                         </li>
                         <li className="nav-item">
                             <a
