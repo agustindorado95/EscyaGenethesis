@@ -29,29 +29,20 @@ export default () => {
                         </li>
                         <li className="nav-item">
                             <a
-                                href="{{ url_for('main.about') }}"
-                                className="nav-link"
-                                target="_blank"
-                            >
-                                关于作者
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a
-                                href="{{ url_for('main.important') }}"
-                                className="nav-link"
-                                target="_blank"
-                            >
-                                更新说明
-                            </a>
-                        </li>
-                        <li className="nav-item">
-                            <a
                                 href="https://github.com/agustindorado95/EscyaGenethesis"
                                 className="nav-link"
                                 target="_blank"
                             >
                                 源代码
+                            </a>
+                        </li>
+                        <li className="nav-item">
+                            <a
+                                href="https://github.com/agustindorado95/EscyaGenethesis/issues"
+                                className="nav-link"
+                                target="_blank"
+                            >
+                                提交问题
                             </a>
                         </li>
                     </ul>

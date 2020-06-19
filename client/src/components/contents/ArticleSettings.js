@@ -1,0 +1,359 @@
+import React, { Fragment, useState, useEffect } from "react";
+import { Redirect,useParams } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { loadArticle, updateArticle, clearArticleCache } from "../../actions/article";
+import { setSection } from "../../actions/section";
+
+const ArticleSettings = ({ alerts, article: {loading, content}, loadArticle, updateArticle, clearArticleCache, setSection}) => {
+
+    const [proMode, setProMode] = useState(false);
+    const init = {
+        language: "zh",
+        tutor: "",
+        title: "",
+        titleSecondLanguage: "",
+        subTitle: "",
+        subTitleSecondLanguage: "",
+        keywords: "",
+        keywordsSecondLanguage: "",
+        font: "Times New Roman",
+        fontSecondLanguage: "Times New Roman",
+        marginLeft: 2,
+        marginRight: 2,
+        marginTop: 2,
+        marginBottom: 2,
+        headingFontSize: 12,
+        bodyFontSize: 12,
+        imageCommentFontSize: 10,
+        referenceFontSize: 10,
+        bibliographyFontSize: 12,
+        tocFontSize: 12,
+        headingLineSpacing: 1.5,
+        tocLineSpacing: 1.5,
+        bodyLineSpacing: 1.5,
+        imageCommentLineSpacing: 1.5,
+        referenceLineSpacing: 1.5,
+        bibliographyLineSpacing: 1.5,
+        headingAfterSpacing: 10,
+        bodyAfterSpacing: 5,
+        tocIndentGrowth: 0.74,
+        bodyIndent: 0.74,
+    }
+    const [formData, setFormData] = useState(init);
+
+    const { ref } = useParams();
+
+    useEffect(() => {
+        setSection('我的论文')
+        if (ref !== "new") {
+            loadArticle(ref);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (Object.keys(content).length > 0) {
+            const newState = formData
+            Object.keys(init).forEach((key)=>{
+                newState[key] = content[key]
+            })
+            setFormData(newState)
+            clearArticleCache()
+        }
+    });
+
+    const setFieldData = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const submitForm = (e) => {
+        e.preventDefault();
+        updateArticle({ ...formData, ref: ref });
+    };
+
+    const inputField = (alerts, fieldName, placeholder, type = "text", params = null) => {
+        return (
+            <Fragment>
+                {["text", "number"].includes(type) && (
+                    <input
+                        className={
+                            alerts.filter((alert) => alert.param === fieldName).length > 0
+                                ? "form-control form-control-alternative is-invalid"
+                                : "form-control form-control-alternative"
+                        }
+                        placeholder={placeholder}
+                        type={type}
+                        name={fieldName}
+                        value={formData[fieldName]}
+                        onChange={setFieldData}
+                    />
+                )}
+                {type === "select" && (
+                    <select
+                        className={
+                            alerts.filter((alert) => alert.param === { fieldName }).length > 0
+                                ? "form-control form-control-alternative is-invalid"
+                                : "form-control form-control-alternative"
+                        }
+                        placeholder={placeholder}
+                        type={type}
+                        name={fieldName}
+                        value={formData[fieldName]}
+                        onChange={setFieldData}
+                    >
+                        {params.map((o) => (
+                            <option key={o.value} value={o.value}>
+                                {o.text}
+                            </option>
+                        ))}
+                    </select>
+                )}
+                {alerts.filter((alert) => alert.param === fieldName).length > 0 && (
+                    <div className="invalid-feedback">
+                        {alerts
+                            .filter((alert) => alert.param === fieldName)
+                            .map((err) => (
+                                <span key={err.id}>{err.msg}</span>
+                            ))}
+                    </div>
+                )}
+            </Fragment>
+        );
+    };
+
+    return (
+        <Fragment>
+            <div className="row">
+                <div className="col-xl-12 order-xl-1">
+                    <div className="card bg-secondary shadow">
+                        <div className="card-header bg-white border-0">
+                            <div className="row align-items-center">
+                                <div className="col-8">
+                                    <h3 className="mb-2">论文设置</h3>
+                                    <small className="text-muted">系统已经内置了一套通用排版设置。如果有特殊需求，可以打开高级模式，自定义文档样式。</small>
+                                </div>
+                                <div className="col-4 text-right">
+                                    <label className="switch">
+                                        <input type="checkbox" className="input-toggle" onChange={() => setProMode(!proMode)} />
+                                        <span className="slider round"></span>
+                                    </label>
+                                    <h5 className="mb-0 pb-0 text-sm">高级模式</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card-body">
+                            <form onSubmit={submitForm}>
+                                <h6 className="heading-small text-muted mb-4">论文基本信息</h6>
+                                <div className="pl-lg-4">
+                                    <div className="row">
+                                        <div className="col-lg-12">
+                                            <div className="form-group mb-1">
+                                                <label className="form-control-label" htmlFor="title">
+                                                    论文标题
+                                                </label>
+                                                {inputField(alerts, "title", "论文标题")}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className="col-lg-12">
+                                            <div className="form-group mt-1">{inputField(alerts, "titleSecondLanguage", "论文第二语言标题（可选）")}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className="col-lg-12">
+                                            <div className="form-group mb-1">
+                                                <label className="form-control-label" htmlFor="subTitle">
+                                                    论文副标题（可选）
+                                                </label>
+                                                {inputField(alerts, "subTitle", "论文副标题（可选）")}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className="col-lg-12">
+                                            <div className="form-group mt-1">{inputField(alerts, "subTitleSecondLanguage", "论文第二语言副标题（可选）")}</div>
+                                        </div>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className="col-lg-8">
+                                            <div className="form-group">
+                                                <label className="form-control-label" htmlFor="tutor">
+                                                    导师
+                                                </label>
+                                                {inputField(alerts, "tutor", "导师")}
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-4">
+                                            <div className="form-group">
+                                                <label className="form-control-label" htmlFor="language">
+                                                    语言
+                                                </label>
+                                                {inputField(alerts, "language", "语言", "select", [
+                                                    { value: "es", text: "西班牙语" },
+                                                    { value: "zh", text: "中文" },
+                                                ])}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="row">
+                                        <div className="col-lg-6">
+                                            <div className="form-group">
+                                                <label className="form-control-label" htmlFor="keywords">
+                                                    关键词
+                                                </label>
+                                                {inputField(alerts, "keywords", "关键词1，关键词2，关键词3……")}
+                                            </div>
+                                        </div>
+                                        <div className="col-lg-6">
+                                            <div className="form-group">
+                                                <label className="form-control-label" htmlFor="keywordsSecondLanguage">
+                                                    第二语言关键词（可选）
+                                                </label>
+                                                {inputField(alerts, "keywordsSecondLanguage", "关键词1，关键词2，关键词3……")}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr className="my-4" />
+
+                                <div id="pro-mode" className={proMode ? "" : "no-display"}>
+                                    <h6 className="heading-small text-muted mb-4">页边距设置</h6>
+                                    <div className="pl-lg-4">
+                                        <div className="row">
+                                            {[
+                                                { label: "上方页边距", fieldName: "marginTop" },
+                                                { label: "下方页边距", fieldName: "marginBottom" },
+                                                { label: "左侧页边距", fieldName: "marginLeft" },
+                                                { label: "右侧页边距", fieldName: "marginRight" },
+                                            ].map((obj) => (
+                                                <div className="col-md-3" key={obj.fieldName}>
+                                                    <div className="form-group">
+                                                        <label className="form-control-label" htmlFor={obj.fieldName}>
+                                                            {obj.label}
+                                                        </label>
+                                                        {inputField(alerts, obj.fieldName, "2.0", "number")}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <hr className="my-4" />
+                                    <h6 className="heading-small text-muted mb-4">字体与字号设置</h6>
+                                    <div className="pl-lg-4">
+                                        <div className="row">
+                                            {[
+                                                { label: "字体", fieldName: "font" },
+                                                { label: "第二语言字体", fieldName: "fontSecondLanguage" },
+                                            ].map((obj) => (
+                                                <div className="col-md-3" key={obj.fieldName}>
+                                                    <div className="form-group">
+                                                        <label className="form-control-label" htmlFor={obj.fieldName}>
+                                                            {obj.label}
+                                                        </label>
+                                                        {inputField(alerts, obj.fieldName, "字体", "select", [
+                                                            { value: "Times New Roman", text: "Times New Roman" },
+                                                            { value: "Helvetica", text: "Helvetica" },
+                                                            { value: "SongTi", text: "宋体" },
+                                                            { value: "HeiTi", text: "黑体" },
+                                                        ])}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {[
+                                                { label: "章节标题字号", fieldName: "headingFontSize" },
+                                                { label: "正文字号", fieldName: "bodyFontSize" },
+                                                { label: "图片说明字号", fieldName: "imageCommentFontSize" },
+                                                { label: "脚注字号", fieldName: "referenceFontSize" },
+                                                { label: "参考书目字号", fieldName: "bibliographyFontSize" },
+                                                { label: "目录字号", fieldName: "tocFontSize" },
+                                            ].map((obj) => (
+                                                <div className="col-md-3" key={obj.fieldName}>
+                                                    <div className="form-group">
+                                                        <label className="form-control-label" htmlFor={obj.fieldName}>
+                                                            {obj.label}
+                                                        </label>
+                                                        {inputField(alerts, obj.fieldName, obj.label, "number")}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <hr className="my-4" />
+                                    <h6 className="heading-small text-muted mb-4">行距与缩进设置</h6>
+                                    <div className="pl-lg-4">
+                                        <div className="row">
+                                            {[
+                                                { label: "章节标题行距", fieldName: "headingLineSpacing" },
+                                                { label: "目录行距", fieldName: "tocLineSpacing" },
+                                                { label: "正文行距", fieldName: "bodyLineSpacing" },
+                                                { label: "图片说明行距", fieldName: "imageCommentLineSpacing" },
+                                                { label: "脚注行距", fieldName: "referenceLineSpacing" },
+                                                { label: "参考书目行距", fieldName: "bibliographyLineSpacing" },
+                                                { label: "章节标题段后距", fieldName: "headingAfterSpacing" },
+                                                { label: "正文段后距", fieldName: "bodyAfterSpacing" },
+                                            ].map((obj) => (
+                                                <div className="col-md-3" key={obj.fieldName}>
+                                                    <div className="form-group">
+                                                        <label className="form-control-label" htmlFor={obj.fieldName}>
+                                                            {obj.label}
+                                                        </label>
+                                                        {inputField(alerts, obj.fieldName, obj.label, "number")}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                            {[
+                                                { label: "目录等级缩进差", fieldName: "tocIndentGrowth" },
+                                                { label: "正文首行缩进", fieldName: "bodyIndent" },
+                                            ].map((obj) => (
+                                                <div className="col-md-3" key={obj.fieldName}>
+                                                    <div className="form-group">
+                                                        <label className="form-control-label" htmlFor={obj.fieldName}>
+                                                            {obj.label}
+                                                        </label>
+                                                        {inputField(alerts, obj.fieldName, obj.label, "number")}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <hr className="my-4" />
+                                </div>
+
+                                <div className="text-right">
+                                    <button type="submit" className="btn btn-primary btn-lg">
+                                        确认信息
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Fragment>
+    );
+};
+
+ArticleSettings.propTypes = {
+    alerts: PropTypes.array.isRequired,
+    article: PropTypes.object.isRequired,
+    loadArticle: PropTypes.func.isRequired,
+    updateArticle: PropTypes.func.isRequired,
+    clearArticleCache: PropTypes.func.isRequired,
+    setSection: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+    alerts: state.alert,
+    article: state.article,
+});
+
+export default connect(mapStateToProps, { loadArticle, updateArticle, clearArticleCache, setSection })(ArticleSettings);

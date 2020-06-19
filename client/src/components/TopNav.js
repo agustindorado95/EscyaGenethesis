@@ -15,7 +15,7 @@ const TopNav = ({ logout, auth: { user }, section }) => {
                         className="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block"
                         href="{{ url_for('main.index') }}"
                     >
-                        {section}
+                        {section.currentSection}
                     </a>
                     <div className="navbar-search navbar-search-dark form-inline mr-3 d-none d-md-flex ml-lg-auto">
                         <div className="form-group mb-0">

@@ -3,8 +3,14 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { updateProfile, uploadAvatar, uploadSignature } from "../../actions/auth";
 import { clearAlert } from "../../actions/alert";
+import { setSection } from "../../actions/section";
 
-const Profile = ({ updateProfile, uploadAvatar, uploadSignature, clearAlert, auth: { user, loading }, alerts }) => {
+const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, clearAlert, auth: { user, loading }, alerts }) => {
+
+    useEffect(() => {
+        setSection("我的信息");
+    }, []);
+
     const [editing, setEditing] = useState(false);
 
     const submitAvatarChange = (e) => {
@@ -83,11 +89,11 @@ const Profile = ({ updateProfile, uploadAvatar, uploadSignature, clearAlert, aut
                             <div className="col">
                                 <div className="card-profile-stats d-flex justify-content-center mt-md-5">
                                     <div>
-                                        <span className="heading">#FAL</span>
+                                        <span className="heading">{user.articles.filter((article) => article.status === "done").length}</span>
                                         <span className="description">已完成论文数</span>
                                     </div>
                                     <div>
-                                        <span className="heading">#PAL</span>
+                                        <span className="heading">{user.articles.filter((article) => article.status === "progress").length}</span>
                                         <span className="description">未完成论文数</span>
                                     </div>
                                 </div>
@@ -416,6 +422,7 @@ Profile.propTypes = {
     alerts: PropTypes.array.isRequired,
     clearAlert: PropTypes.func.isRequired,
     uploadAvatar: PropTypes.func.isRequired,
+    setSection: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
@@ -424,6 +431,7 @@ const mapStateToProps = (state) => ({
 });
 
 export default connect(mapStateToProps, {
+    setSection,
     updateProfile,
     uploadAvatar,
     uploadSignature,

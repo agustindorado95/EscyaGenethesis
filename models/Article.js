@@ -12,6 +12,9 @@ const ArticleSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    tutor: {
+        type: String,
+    },
     status: {
         type: String,
         default: 'progress'

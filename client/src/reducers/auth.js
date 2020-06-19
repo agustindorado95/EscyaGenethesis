@@ -17,7 +17,8 @@ const initialState = {
         firstName: '加载中...',
         lastName: '',
         avatar: 'default.jpg',
-        timeCreated: new Date()
+        timeCreated: new Date(),
+        articles: []
     },
 };
 
