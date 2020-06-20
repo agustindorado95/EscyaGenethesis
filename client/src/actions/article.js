@@ -63,6 +63,13 @@ export const loadFocusArticle = (id) => async (dispatch) => {
     }
 };
 
+export const clearFocusArticle = () => (dispatch) => {
+    dispatch({
+        type: LOAD_FOCUS_ARTICLE_SUCCESS,
+        payload: {},
+    });
+}
+
 export const updateArticle = ({
     ref,
     language,

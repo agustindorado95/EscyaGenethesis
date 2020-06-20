@@ -47,7 +47,9 @@ export const register = ({ firstName, lastName, email, password }) => async (
     } catch (error) {
         const errors = error.response.data.errors;
         if (errors) {
-            errors.forEach((err) => dispatch(setAlert(err.msg, "danger")));
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
         }
         dispatch({
             type: REGISTER_FAIL,
@@ -68,7 +70,9 @@ export const login = ({ email, password }) => async (dispatch) => {
     } catch (error) {
         const errors = error.response.data.errors;
         if (errors) {
-            errors.forEach((err) => dispatch(setAlert(err.msg, "danger")));
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
         }
         dispatch({
             type: LOGIN_FAIL,
@@ -108,9 +112,9 @@ export const updateProfile = ({
     } catch (error) {
         const errors = error.response.data.errors;
         if (errors) {
-            errors.forEach((err) =>
-                dispatch(setAlertInForm(err.msg, err.param))
-            );
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
         }
     }
 };
@@ -127,9 +131,9 @@ export const changePassword = ({ oldPassword, newPassword }) => async (
     } catch (error) {
         const errors = error.response.data.errors;
         if (errors) {
-            errors.forEach((err) =>
-                dispatch(setAlert(err.msg, 'danger'))
-            );
+            errors.forEach((err) => {
+                dispatch(setAlert(err.msg, "danger"));
+            });
         }
     }
 };
@@ -145,8 +149,12 @@ export const uploadAvatar = ({ avatar }) => async (dispatch) => {
         await axios.post("/api/users/me/avatar", body, config);
         dispatch(setAlert("用户头像已经成功修改。", "success"));
     } catch (error) {
-        const err = error.response.data;
-        dispatch(setAlert(err, "danger"));
+        const errors = error.response.data.errors;
+        if (errors) {
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
+        }
     }
     dispatch(loadUser());
 };
@@ -162,8 +170,12 @@ export const uploadSignature = ({ signature }) => async (dispatch) => {
         await axios.post("/api/users/me/signature", body, config);
         dispatch(setAlert("用户签名已经成功修改。", "success"));
     } catch (error) {
-        const err = error.response.data;
-        dispatch(setAlert(err, "danger"));
+        const errors = error.response.data.errors;
+        if (errors) {
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
+        }
     }
     dispatch(loadUser());
 };

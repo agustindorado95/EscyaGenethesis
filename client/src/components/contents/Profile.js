@@ -1,10 +1,11 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { updateProfile, uploadAvatar, uploadSignature } from "../../actions/auth";
 import { clearAlert } from "../../actions/alert";
 import { setSection } from "../../actions/section";
 import { loadUserArticles } from "../../actions/article";
+import { inputField, textAreaField } from '../InputField'
 
 const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, auth: { user, loading }, clearAlert, alerts, loadUserArticles, userArticles }) => {
     useEffect(() => {
@@ -28,8 +29,6 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
 
     const [profileFormData, setProfileFormData] = useState({});
 
-    const { email, firstName, lastName, university, faculty, grade, selfIntro } = profileFormData;
-
     useEffect(() => {
         if (!loading) {
             setProfileFormData({
@@ -42,6 +41,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                 selfIntro: user.selfIntro,
             });
         }
+        alerts.length > 0 && clearAlert()
     }, [editing]);
 
     useEffect(() => {
@@ -161,29 +161,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                                                 电子邮箱
                                             </label>
                                             {editing ? (
-                                                <Fragment>
-                                                    <input
-                                                        className={
-                                                            alerts.filter((alert) => alert.param === "email").length > 0
-                                                                ? "form-control form-control-alternative is-invalid"
-                                                                : "form-control form-control-alternative"
-                                                        }
-                                                        placeholder="电子邮箱"
-                                                        type="email"
-                                                        name="email"
-                                                        value={email}
-                                                        onChange={setProfileFieldData}
-                                                    />
-                                                    {alerts.filter((alert) => alert.param === "email").length > 0 && (
-                                                        <div className="invalid-feedback">
-                                                            {alerts
-                                                                .filter((alert) => alert.param === "email")
-                                                                .map((err) => (
-                                                                    <span key={err.id}>{err.msg}</span>
-                                                                ))}
-                                                        </div>
-                                                    )}
-                                                </Fragment>
+                                                inputField(profileFormData, setProfileFieldData, alerts, "email", "电子邮箱地址", "email", {required:true})
                                             ) : (
                                                 <p className="old-info">{user.email}</p>
                                             )}
@@ -198,29 +176,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                                                 姓
                                             </label>
                                             {editing ? (
-                                                <Fragment>
-                                                    <input
-                                                        className={
-                                                            alerts.filter((alert) => alert.param === "lastName").length > 0
-                                                                ? "form-control form-control-alternative is-invalid"
-                                                                : "form-control form-control-alternative"
-                                                        }
-                                                        placeholder="姓"
-                                                        type="text"
-                                                        name="lastName"
-                                                        value={lastName}
-                                                        onChange={setProfileFieldData}
-                                                    />
-                                                    {alerts.filter((alert) => alert.param === "lastName").length > 0 && (
-                                                        <div className="invalid-feedback">
-                                                            {alerts
-                                                                .filter((alert) => alert.param === "lastName")
-                                                                .map((err) => (
-                                                                    <span key={err.id}>{err.msg}</span>
-                                                                ))}
-                                                        </div>
-                                                    )}
-                                                </Fragment>
+                                                inputField(profileFormData, setProfileFieldData, alerts, "lastName", "姓", "text", {required:true})
                                             ) : (
                                                 <p className="old-info">{user.lastName}</p>
                                             )}
@@ -233,29 +189,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                                             </label>
 
                                             {editing ? (
-                                                <Fragment>
-                                                    <input
-                                                        className={
-                                                            alerts.filter((alert) => alert.param === "firstName").length > 0
-                                                                ? "form-control form-control-alternative is-invalid"
-                                                                : "form-control form-control-alternative"
-                                                        }
-                                                        placeholder="名"
-                                                        type="text"
-                                                        name="firstName"
-                                                        value={firstName}
-                                                        onChange={setProfileFieldData}
-                                                    />
-                                                    {alerts.filter((alert) => alert.param === "firstName").length > 0 && (
-                                                        <div className="invalid-feedback">
-                                                            {alerts
-                                                                .filter((alert) => alert.param === "firstName")
-                                                                .map((err) => (
-                                                                    <span key={err.id}>{err.msg}</span>
-                                                                ))}
-                                                        </div>
-                                                    )}
-                                                </Fragment>
+                                                inputField(profileFormData, setProfileFieldData, alerts, "firstName", "名", "text", {required:true})
                                             ) : (
                                                 <p className="old-info">{user.firstName}</p>
                                             )}
@@ -273,29 +207,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                                                 大学
                                             </label>
                                             {editing ? (
-                                                <Fragment>
-                                                    <input
-                                                        className={
-                                                            alerts.filter((alert) => alert.param === "university").length > 0
-                                                                ? "form-control form-control-alternative is-invalid"
-                                                                : "form-control form-control-alternative"
-                                                        }
-                                                        placeholder="大学"
-                                                        type="text"
-                                                        name="university"
-                                                        value={university}
-                                                        onChange={setProfileFieldData}
-                                                    />
-                                                    {alerts.filter((alert) => alert.param === "university").length > 0 && (
-                                                        <div className="invalid-feedback">
-                                                            {alerts
-                                                                .filter((alert) => alert.param === "university")
-                                                                .map((err) => (
-                                                                    <span key={err.id}>{err.msg}</span>
-                                                                ))}
-                                                        </div>
-                                                    )}
-                                                </Fragment>
+                                                inputField(profileFormData, setProfileFieldData, alerts, "university", "大学", "text", {required:true})
                                             ) : (
                                                 <p className="old-info">{user.university}</p>
                                             )}
@@ -309,29 +221,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                                                 院系
                                             </label>
                                             {editing ? (
-                                                <Fragment>
-                                                    <input
-                                                        className={
-                                                            alerts.filter((alert) => alert.param === "faculty").length > 0
-                                                                ? "form-control form-control-alternative is-invalid"
-                                                                : "form-control form-control-alternative"
-                                                        }
-                                                        placeholder="院系"
-                                                        type="text"
-                                                        name="faculty"
-                                                        value={faculty}
-                                                        onChange={setProfileFieldData}
-                                                    />
-                                                    {alerts.filter((alert) => alert.param === "faculty").length > 0 && (
-                                                        <div className="invalid-feedback">
-                                                            {alerts
-                                                                .filter((alert) => alert.param === "faculty")
-                                                                .map((err) => (
-                                                                    <span key={err.id}>{err.msg}</span>
-                                                                ))}
-                                                        </div>
-                                                    )}
-                                                </Fragment>
+                                                inputField(profileFormData, setProfileFieldData, alerts, "faculty", "院系", "text", {required:true})
                                             ) : (
                                                 <p className="old-info">{user.faculty}</p>
                                             )}
@@ -343,29 +233,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                                                 年级
                                             </label>
                                             {editing ? (
-                                                <Fragment>
-                                                    <input
-                                                        className={
-                                                            alerts.filter((alert) => alert.param === "grade").length > 0
-                                                                ? "form-control form-control-alternative is-invalid"
-                                                                : "form-control form-control-alternative"
-                                                        }
-                                                        placeholder="年级"
-                                                        type="text"
-                                                        name="grade"
-                                                        value={grade}
-                                                        onChange={setProfileFieldData}
-                                                    />
-                                                    {alerts.filter((alert) => alert.param === "grade").length > 0 && (
-                                                        <div className="invalid-feedback">
-                                                            {alerts
-                                                                .filter((alert) => alert.param === "grade")
-                                                                .map((err) => (
-                                                                    <span key={err.id}>{err.msg}</span>
-                                                                ))}
-                                                        </div>
-                                                    )}
-                                                </Fragment>
+                                                inputField(profileFormData, setProfileFieldData, alerts, "grade", "年级", "text", {required:true})
                                             ) : (
                                                 <p className="old-info">{user.grade}</p>
                                             )}
@@ -378,14 +246,7 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, aut
                             <div className="pl-lg-4">
                                 <div className="form-group">
                                     {editing ? (
-                                        <textarea
-                                            className="form-control form-control-alternative"
-                                            placeholder="个人简介"
-                                            type="text"
-                                            name="selfIntro"
-                                            value={selfIntro}
-                                            onChange={setProfileFieldData}
-                                        ></textarea>
+                                        textAreaField(profileFormData, setProfileFieldData, alerts, "selfIntro", "个人简介")
                                     ) : (
                                         <p className="old-info">{user.selfIntro}</p>
                                     )}

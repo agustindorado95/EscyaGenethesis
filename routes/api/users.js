@@ -38,7 +38,7 @@ router.post("/register", registerCheck, async (req, res) => {
             return res.status(400).json({
                 errors: [
                     {
-                        msg: "Email already registered.",
+                        msg: "该邮箱已被注册，或许您可以直接登录？",
                         param: "email",
                         location: "body",
                     },
@@ -69,8 +69,15 @@ router.post("/register", registerCheck, async (req, res) => {
             }
         );
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `用户注册失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 
@@ -82,8 +89,15 @@ router.get("/load", userRequired, async (req, res) => {
         const user = await User.findById(req.user.id).select("-password");
         return res.json(user);
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `用户加载失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 
@@ -104,7 +118,7 @@ router.post("/login", loginCheck, async (req, res) => {
             return res.status(400).json({
                 errors: [
                     {
-                        msg: "User does not exist.",
+                        msg: `我们的小本本上没有${email}，或许您可以直接注册。`,
                         param: "email",
                         location: "body",
                     },
@@ -118,7 +132,7 @@ router.post("/login", loginCheck, async (req, res) => {
             return res.status(400).json({
                 errors: [
                     {
-                        msg: "Incorrect password.",
+                        msg: "密码错误，您确定没有按错键吗？",
                         param: "password",
                         location: "body",
                     },
@@ -142,8 +156,15 @@ router.post("/login", loginCheck, async (req, res) => {
             }
         );
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `登录失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 
@@ -181,6 +202,7 @@ router.post("/me", [userRequired, userProfileCheck], async (req, res) => {
                 });
             }
         }
+        user.email = email;
         user.firstName = firstName;
         user.lastName = lastName;
         user.university = university;
@@ -190,8 +212,15 @@ router.post("/me", [userRequired, userProfileCheck], async (req, res) => {
         await user.save();
         return res.json(user);
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `用户信息更新失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 
@@ -220,7 +249,15 @@ router.post(
             fs.unlinkSync(req.file.path);
             return res.status(200).send("Success.");
         } catch (error) {
-            return res.status(500).send(error);
+            console.log(error)
+            return res.status(500).json({
+                errors: [
+                    {
+                        msg: `用户头像更新失败，因为${error.message}`,
+                        location: "banner",
+                    },
+                ],
+            });
         }
     }
 );
@@ -250,7 +287,15 @@ router.post(
             fs.unlinkSync(req.file.path);
             return res.status(200).send("Success.");
         } catch (error) {
-            return res.status(500).send(error);
+            console.log(error)
+            return res.status(500).json({
+                errors: [
+                    {
+                        msg: `用户签名更新失败，因为${error.message}`,
+                        location: "banner",
+                    },
+                ],
+            });
         }
     }
 );
@@ -275,8 +320,7 @@ router.post(
                     errors: [
                         {
                             msg: "旧密码输入错误。",
-                            param: "oldPassword",
-                            location: "body",
+                            location: "banner",
                         },
                     ],
                 });
@@ -286,8 +330,15 @@ router.post(
             await user.save();
             return res.status(200).send("Success.");
         } catch (error) {
-            console.log(error.message);
-            return res.status(500).send("Internal server error.");
+            console.log(error)
+            return res.status(500).json({
+                errors: [
+                    {
+                        msg: `用户密码修改失败，因为${error.message}`,
+                        location: "banner",
+                    },
+                ],
+            });
         }
     }
 );
@@ -301,8 +352,15 @@ router.delete("/me", userRequired, async (req, res) => {
         await Article.find({ user: req.user.id }).remove();
         return res.json({ msg: "User and all related contents removed." });
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        console.log(error)
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `用户删除失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 

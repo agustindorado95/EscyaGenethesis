@@ -2,6 +2,7 @@ import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { changePassword } from "../actions/auth";
+import {inputField} from './InputField'
 
 const Modals = ({ changePassword }) => {
     const [changePasswordFormData, setChangePasswordFormData] = useState({
@@ -58,39 +59,11 @@ const Modals = ({ changePassword }) => {
                         </div>
                         <form onSubmit={submitPasswordChangeForm}>
                             <div className="modal-body pt-0 pb-0">
-                                <input
-                                    type="password"
-                                    className="form-control form-control-alternative mb-3"
-                                    id="input-old-pw"
-                                    name="oldPassword"
-                                    placeholder="请输入旧密码..."
-                                    minLength="6"
-                                    required
-                                    value={oldPassword}
-                                    onChange={setPasswordChangeFieldData}
-                                />
-                                <input
-                                    type="password"
-                                    className="form-control form-control-alternative mb-3"
-                                    id="input-new-pw"
-                                    name="newPassword"
-                                    placeholder="请输入新密码..."
-                                    minLength="6"
-                                    required
-                                    value={newPassword}
-                                    onChange={setPasswordChangeFieldData}
-                                />
-                                <input
-                                    type="password"
-                                    className="form-control form-control-alternative mb-0"
-                                    id="input-conf-pw"
-                                    name="confirmPassword"
-                                    placeholder="请再次输入新密码以确认..."
-                                    minLength="6"
-                                    required
-                                    value={confirmPassword}
-                                    onChange={setPasswordChangeFieldData}
-                                />
+                                {inputField(changePasswordFormData, setPasswordChangeFieldData, [], 'oldPassword', "请输入旧密码...", 'password', {required:true})}
+                                <div className="mb-3"></div>
+                                {inputField(changePasswordFormData, setPasswordChangeFieldData, [], 'newPassword', "请输入新密码...", 'password', {required:true, minLength:6})}
+                                <div className="mb-3"></div>
+                                {inputField(changePasswordFormData, setPasswordChangeFieldData, [], 'confirmPassword', "请再次输入新密码以确认...", 'password', {required:true, minLength:6})}
                             </div>
                             <div className="modal-footer">
                                 <button id="password-change-close" type="button" className="btn btn-secondary" data-dismiss="modal">

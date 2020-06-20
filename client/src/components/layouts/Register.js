@@ -1,12 +1,13 @@
 import React, { Fragment, useState } from "react";
 import { connect } from "react-redux";
 import { Link, Redirect } from "react-router-dom";
-import { setAlert } from "../../actions/alert";
+import { setAlert, setAlertInForm, clearAlert } from "../../actions/alert";
 import { register } from "../../actions/auth";
+import { inputField } from "../InputField";
 import TopNavUnAuthed from "../TopNavUnAuthed";
 import PropTypes from "prop-types";
 
-const Register = ({ setAlert, register, isAuthenticated }) => {
+const Register = ({ alerts, setAlert, setAlertInForm, clearAlert, register, isAuthenticated }) => {
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -14,7 +15,6 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         password: "",
         confirmPassword: "",
     });
-    const { firstName, lastName, email, password, confirmPassword } = formData;
 
     const [{ policyAgreed }, setPolicyAgreed] = useState({
         policyAgreed: false,
@@ -24,20 +24,22 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
         setPolicyAgreed({ policyAgreed: !policyAgreed });
     };
 
-    const onChange = (e) =>
+    const setFieldData = (e) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value,
         });
+        alerts.length > 0 && clearAlert();
+    };
 
     const onSubmit = async (e) => {
         e.preventDefault();
         if (!policyAgreed) {
             setAlert("请先同意隐私条款。", "danger");
-        } else if (password !== confirmPassword) {
-            setAlert("两次输入的密码不匹配，请重试。", "danger");
+        } else if (formData.password !== formData.confirmPassword) {
+            setAlertInForm("两次输入的密码不匹配，请重试。", "confirmPassword");
         } else {
-            register({ firstName, lastName, email, password });
+            register(formData);
         }
     };
 
@@ -54,29 +56,15 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                         <div className="header-body text-center mb-7">
                             <div className="row justify-content-center">
                                 <div className="col-lg-5 col-md-6">
-                                    <h1 className="text-white">
-                                        欢迎使用Genethesis!
-                                    </h1>
-                                    <p className="text-lead text-light">
-                                        模块化论文撰写，全自动论文整合，自定义论文输出。从此不再受论文格式的困扰。
-                                    </p>
+                                    <h1 className="text-white">欢迎使用Genethesis!</h1>
+                                    <p className="text-lead text-light">模块化论文撰写，全自动论文整合，自定义论文输出。从此不再受论文格式的困扰。</p>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div className="separator separator-bottom separator-skew zindex-100">
-                        <svg
-                            x="0"
-                            y="0"
-                            viewBox="0 0 2560 100"
-                            preserveAspectRatio="none"
-                            version="1.1"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <polygon
-                                className="fill-default"
-                                points="2560 0 2560 100 0 100"
-                            ></polygon>
+                        <svg x="0" y="0" viewBox="0 0 2560 100" preserveAspectRatio="none" version="1.1" xmlns="http://www.w3.org/2000/svg">
+                            <polygon className="fill-default" points="2560 0 2560 100 0 100"></polygon>
                         </svg>
                     </div>
                 </div>
@@ -100,17 +88,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                                                                 <i className="fal fa-signature"></i>
                                                             </span>
                                                         </div>
-                                                        <input
-                                                            className="form-control"
-                                                            type="text"
-                                                            placeholder="名"
-                                                            name="firstName"
-                                                            value={firstName}
-                                                            onChange={(e) =>
-                                                                onChange(e)
-                                                            }
-                                                            required
-                                                        />
+                                                        {inputField(formData, setFieldData, alerts, "lastName", "姓", "text", {required:true})}
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,17 +100,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                                                                 <i className="fal fa-signature"></i>
                                                             </span>
                                                         </div>
-                                                        <input
-                                                            className="form-control"
-                                                            type="text"
-                                                            placeholder="姓"
-                                                            name="lastName"
-                                                            value={lastName}
-                                                            onChange={(e) =>
-                                                                onChange(e)
-                                                            }
-                                                            required
-                                                        />
+                                                        {inputField(formData, setFieldData, alerts, "firstName", "名", "text", {required:true})}
                                                     </div>
                                                 </div>
                                             </div>
@@ -144,17 +112,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                                                         <i className="fal fa-envelope-open"></i>
                                                     </span>
                                                 </div>
-                                                <input
-                                                    className="form-control"
-                                                    type="email"
-                                                    placeholder="电子邮箱地址"
-                                                    name="email"
-                                                    value={email}
-                                                    onChange={(e) =>
-                                                        onChange(e)
-                                                    }
-                                                    required
-                                                />
+                                                {inputField(formData, setFieldData, alerts, "email", "电子邮箱地址", "email", {required:true})}
                                             </div>
                                         </div>
                                         <div className="form-group">
@@ -164,17 +122,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                                                         <i className="fal fa-lock-open-alt"></i>
                                                     </span>
                                                 </div>
-                                                <input
-                                                    className="form-control"
-                                                    type="password"
-                                                    placeholder="密码"
-                                                    name="password"
-                                                    minLength="6"
-                                                    value={password}
-                                                    onChange={(e) =>
-                                                        onChange(e)
-                                                    }
-                                                />
+                                                {inputField(formData, setFieldData, alerts, "password", "密码", "password", {required:true})}
                                             </div>
                                         </div>
                                         <div className="form-group">
@@ -184,17 +132,7 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                                                         <i className="fal fa-lock-open-alt"></i>
                                                     </span>
                                                 </div>
-                                                <input
-                                                    className="form-control"
-                                                    type="password"
-                                                    placeholder="确认密码"
-                                                    name="confirmPassword"
-                                                    minLength="6"
-                                                    value={confirmPassword}
-                                                    onChange={(e) =>
-                                                        onChange(e)
-                                                    }
-                                                />
+                                                {inputField(formData, setFieldData, alerts, "confirmPassword", "确认密码", "password", {required:true})}
                                             </div>
                                         </div>
                                         <div className="row my-4">
@@ -208,17 +146,10 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                                                             checkPolicyAgreed();
                                                         }}
                                                     />
-                                                    <label
-                                                        className="custom-control-label"
-                                                        htmlFor="customCheckRegister"
-                                                    >
+                                                    <label className="custom-control-label" htmlFor="customCheckRegister">
                                                         <span className="text-muted">
                                                             我同意
-                                                            <a
-                                                                href="#!"
-                                                                data-toggle="modal"
-                                                                data-target="#privacyModal"
-                                                            >
+                                                            <a href="#!" data-toggle="modal" data-target="#privacyModal">
                                                                 隐私协议
                                                             </a>
                                                         </span>
@@ -228,16 +159,8 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
                                         </div>
                                         <div className="text-center">
                                             <button
-                                                type={
-                                                    policyAgreed
-                                                        ? "submit"
-                                                        : "button"
-                                                }
-                                                className={
-                                                    policyAgreed
-                                                        ? "btn btn-primary mt-4"
-                                                        : "btn btn-primary mt-4 disabled"
-                                                }
+                                                type={policyAgreed ? "submit" : "button"}
+                                                className={policyAgreed ? "btn btn-primary mt-4" : "btn btn-primary mt-4 disabled"}
                                                 id="register"
                                             >
                                                 创建账户
@@ -265,12 +188,16 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
 
 Register.protoTypes = {
     setAlert: PropTypes.func.isRequired,
+    setAlertInForm: PropTypes.func.isRequired,
+    clearAlert: PropTypes.func.isRequired,
+    alerts: PropTypes.array.isRequired,
     register: PropTypes.func.isRequired,
     isAuthenticated: PropTypes.bool,
 };
 
 const mapStateToProps = (state) => ({
     isAuthenticated: state.auth.isAuthenticated,
+    alerts: state.alert,
 });
 
-export default connect(mapStateToProps, { setAlert, register })(Register);
+export default connect(mapStateToProps, { setAlert, register, clearAlert, setAlertInForm })(Register);

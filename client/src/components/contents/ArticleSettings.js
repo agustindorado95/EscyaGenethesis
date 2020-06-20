@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { inputField, selectField } from "../InputField";
 import { loadFocusArticle, updateArticle } from "../../actions/article";
 import { setSection } from "../../actions/section";
 
@@ -72,56 +73,6 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
         updateArticle({ ...formData, ref: ref });
     };
 
-    const inputField = (alerts, fieldName, placeholder, type = "text", params = null) => {
-        return (
-            <Fragment>
-                {["text", "number"].includes(type) && (
-                    <input
-                        className={
-                            alerts.filter((alert) => alert.param === fieldName).length > 0
-                                ? "form-control form-control-alternative is-invalid"
-                                : "form-control form-control-alternative"
-                        }
-                        placeholder={placeholder}
-                        type={type}
-                        name={fieldName}
-                        value={formData[fieldName]}
-                        onChange={setFieldData}
-                    />
-                )}
-                {type === "select" && (
-                    <select
-                        className={
-                            alerts.filter((alert) => alert.param === { fieldName }).length > 0
-                                ? "form-control form-control-alternative is-invalid"
-                                : "form-control form-control-alternative"
-                        }
-                        placeholder={placeholder}
-                        type={type}
-                        name={fieldName}
-                        value={formData[fieldName]}
-                        onChange={setFieldData}
-                    >
-                        {params.map((o) => (
-                            <option key={o.value} value={o.value}>
-                                {o.text}
-                            </option>
-                        ))}
-                    </select>
-                )}
-                {alerts.filter((alert) => alert.param === fieldName).length > 0 && (
-                    <div className="invalid-feedback">
-                        {alerts
-                            .filter((alert) => alert.param === fieldName)
-                            .map((err) => (
-                                <span key={err.id}>{err.msg}</span>
-                            ))}
-                    </div>
-                )}
-            </Fragment>
-        );
-    };
-
     return (
         <Fragment>
             <div className="row">
@@ -152,14 +103,16 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                 <label className="form-control-label" htmlFor="title">
                                                     论文标题
                                                 </label>
-                                                {inputField(alerts, "title", "论文标题")}
+                                                {inputField(formData, setFieldData, alerts, "title", "论文标题", "text", { required: true })}
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="row">
                                         <div className="col-lg-12">
-                                            <div className="form-group mt-1">{inputField(alerts, "titleSecondLanguage", "论文第二语言标题（可选）")}</div>
+                                            <div className="form-group mt-1">
+                                                {inputField(formData, setFieldData, alerts, "titleSecondLanguage", "论文第二语言标题（可选）", "text")}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -169,14 +122,16 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                 <label className="form-control-label" htmlFor="subTitle">
                                                     论文副标题（可选）
                                                 </label>
-                                                {inputField(alerts, "subTitle", "论文副标题（可选）")}
+                                                {inputField(formData, setFieldData, alerts, "subTitle", "论文副标题（可选）", "text")}
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="row">
                                         <div className="col-lg-12">
-                                            <div className="form-group mt-1">{inputField(alerts, "subTitleSecondLanguage", "论文第二语言副标题（可选）")}</div>
+                                            <div className="form-group mt-1">
+                                                {inputField(formData, setFieldData, alerts, "subTitleSecondLanguage", "论文第二语言副标题（可选）", "text")}
+                                            </div>
                                         </div>
                                     </div>
 
@@ -186,7 +141,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                 <label className="form-control-label" htmlFor="tutor">
                                                     导师
                                                 </label>
-                                                {inputField(alerts, "tutor", "导师")}
+                                                {inputField(formData, setFieldData, alerts, "tutor", "导师", "text")}
                                             </div>
                                         </div>
                                         <div className="col-lg-4">
@@ -194,7 +149,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                 <label className="form-control-label" htmlFor="language">
                                                     语言
                                                 </label>
-                                                {inputField(alerts, "language", "语言", "select", [
+                                                {selectField(formData, setFieldData, alerts, "language", "语言", [
                                                     { value: "es", text: "西班牙语" },
                                                     { value: "zh", text: "中文" },
                                                 ])}
@@ -208,7 +163,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                 <label className="form-control-label" htmlFor="keywords">
                                                     关键词
                                                 </label>
-                                                {inputField(alerts, "keywords", "关键词1，关键词2，关键词3……")}
+                                                {inputField(formData, setFieldData, alerts, "keywords", "关键词1，关键词2，关键词3……", "text")}
                                             </div>
                                         </div>
                                         <div className="col-lg-6">
@@ -216,7 +171,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                 <label className="form-control-label" htmlFor="keywordsSecondLanguage">
                                                     第二语言关键词（可选）
                                                 </label>
-                                                {inputField(alerts, "keywordsSecondLanguage", "关键词1，关键词2，关键词3……")}
+                                                {inputField(formData, setFieldData, alerts, "keywordsSecondLanguage", "关键词1，关键词2，关键词3……", "text")}
                                             </div>
                                         </div>
                                     </div>
@@ -238,7 +193,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                         <label className="form-control-label" htmlFor={obj.fieldName}>
                                                             {obj.label}
                                                         </label>
-                                                        {inputField(alerts, obj.fieldName, "2.0", "number")}
+                                                        {inputField(formData, setFieldData, alerts, obj.fieldName, obj.label, "number", { required: true })}
                                                     </div>
                                                 </div>
                                             ))}
@@ -257,7 +212,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                         <label className="form-control-label" htmlFor={obj.fieldName}>
                                                             {obj.label}
                                                         </label>
-                                                        {inputField(alerts, obj.fieldName, "字体", "select", [
+                                                        {selectField(formData, setFieldData, alerts, obj.fieldName, "字体", [
                                                             { value: "Times New Roman", text: "Times New Roman" },
                                                             { value: "Helvetica", text: "Helvetica" },
                                                             { value: "SongTi", text: "宋体" },
@@ -279,7 +234,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                         <label className="form-control-label" htmlFor={obj.fieldName}>
                                                             {obj.label}
                                                         </label>
-                                                        {inputField(alerts, obj.fieldName, obj.label, "number")}
+                                                        {inputField(formData, setFieldData, alerts, obj.fieldName, obj.label, "number", { required: true })}
                                                     </div>
                                                 </div>
                                             ))}
@@ -304,7 +259,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                         <label className="form-control-label" htmlFor={obj.fieldName}>
                                                             {obj.label}
                                                         </label>
-                                                        {inputField(alerts, obj.fieldName, obj.label, "number")}
+                                                        {inputField(formData, setFieldData, alerts, obj.fieldName, obj.label, "number", { required: true })}
                                                     </div>
                                                 </div>
                                             ))}
@@ -317,7 +272,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                                         <label className="form-control-label" htmlFor={obj.fieldName}>
                                                             {obj.label}
                                                         </label>
-                                                        {inputField(alerts, obj.fieldName, obj.label, "number")}
+                                                        {inputField(formData, setFieldData, alerts, obj.fieldName, obj.label, "number", { required: true })}
                                                     </div>
                                                 </div>
                                             ))}

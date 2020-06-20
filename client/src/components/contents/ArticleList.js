@@ -3,11 +3,12 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { setSection } from "../../actions/section";
-import { loadUserArticles, markArticleStatus } from "../../actions/article";
+import { loadUserArticles, clearFocusArticle, markArticleStatus } from "../../actions/article";
 
-const ArticleList = ({ userArticles, setSection, loadUserArticles, markArticleStatus }) => {
+const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArticle, markArticleStatus }) => {
     useEffect(() => {
         setSection("我的论文");
+        clearFocusArticle()
         loadUserArticles();
     }, []);
 
@@ -222,6 +223,7 @@ ArticleList.propTypes = {
     userArticles: PropTypes.array.isRequired,
     setSection: PropTypes.func.isRequired,
     loadUserArticles: PropTypes.func.isRequired,
+    clearFocusArticle: PropTypes.func.isRequired,
     markArticleStatus: PropTypes.func.isRequired,
 };
 
@@ -229,4 +231,4 @@ const mapStateToProps = (state) => ({
     userArticles: state.article.userArticles,
 });
 
-export default connect(mapStateToProps, { setSection, loadUserArticles, markArticleStatus })(ArticleList);
+export default connect(mapStateToProps, { setSection, loadUserArticles,clearFocusArticle, markArticleStatus })(ArticleList);
