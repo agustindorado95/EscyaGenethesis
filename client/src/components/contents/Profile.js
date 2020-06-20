@@ -4,11 +4,12 @@ import { connect } from "react-redux";
 import { updateProfile, uploadAvatar, uploadSignature } from "../../actions/auth";
 import { clearAlert } from "../../actions/alert";
 import { setSection } from "../../actions/section";
+import { loadUserArticles } from "../../actions/article";
 
-const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, clearAlert, auth: { user, loading }, alerts }) => {
-
+const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, auth: { user, loading }, clearAlert, alerts, loadUserArticles, userArticles }) => {
     useEffect(() => {
         setSection("我的信息");
+        loadUserArticles();
     }, []);
 
     const [editing, setEditing] = useState(false);
@@ -89,11 +90,11 @@ const Profile = ({ setSection, updateProfile, uploadAvatar, uploadSignature, cle
                             <div className="col">
                                 <div className="card-profile-stats d-flex justify-content-center mt-md-5">
                                     <div>
-                                        <span className="heading">{user.articles.filter((article) => article.status === "done").length}</span>
+                                        <span className="heading">{userArticles.filter((article) => article.status === "finalized").length}</span>
                                         <span className="description">已完成论文数</span>
                                     </div>
                                     <div>
-                                        <span className="heading">{user.articles.filter((article) => article.status === "progress").length}</span>
+                                        <span className="heading">{userArticles.filter((article) => article.status === "progress").length}</span>
                                         <span className="description">未完成论文数</span>
                                     </div>
                                 </div>
@@ -423,11 +424,13 @@ Profile.propTypes = {
     clearAlert: PropTypes.func.isRequired,
     uploadAvatar: PropTypes.func.isRequired,
     setSection: PropTypes.func.isRequired,
+    loadUserArticles: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     auth: state.auth,
     alerts: state.alert,
+    userArticles: state.article.userArticles
 });
 
 export default connect(mapStateToProps, {
@@ -436,4 +439,5 @@ export default connect(mapStateToProps, {
     uploadAvatar,
     uploadSignature,
     clearAlert,
+    loadUserArticles
 })(Profile);

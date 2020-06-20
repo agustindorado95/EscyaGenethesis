@@ -2,7 +2,7 @@ import React from "react";
 
 export default () => {
     return (
-        <footer className="footer">
+        <footer className="footer container-fluid">
             <div className="row align-items-center justify-content-xl-between">
                 <div className="col-xl-6">
                     <div className="copyright text-center text-xl-left text-muted">

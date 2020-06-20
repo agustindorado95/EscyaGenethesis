@@ -121,6 +121,9 @@ body {
     pointer-events: none;
 }
 
+.calc-height-before-footer {
+    min-height: calc(100vh - 7rem);
+}
 
 .version {
     position: relative;
@@ -140,6 +143,9 @@ body {
 
 .pointer-event-none {
     pointer-events: none;
+}
+.cursor-pointer {
+    cursor: pointer;;
 }
 
 .btn-none {

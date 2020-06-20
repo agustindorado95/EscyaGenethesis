@@ -1,12 +1,11 @@
 import React, { Fragment, useState, useEffect } from "react";
-import { Redirect,useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
-import { loadArticle, updateArticle, clearArticleCache } from "../../actions/article";
+import { loadFocusArticle, updateArticle } from "../../actions/article";
 import { setSection } from "../../actions/section";
 
-const ArticleSettings = ({ alerts, article: {loading, content}, loadArticle, updateArticle, clearArticleCache, setSection}) => {
-
+const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle, setSection }) => {
     const [proMode, setProMode] = useState(false);
     const init = {
         language: "zh",
@@ -39,28 +38,27 @@ const ArticleSettings = ({ alerts, article: {loading, content}, loadArticle, upd
         bodyAfterSpacing: 5,
         tocIndentGrowth: 0.74,
         bodyIndent: 0.74,
-    }
+    };
     const [formData, setFormData] = useState(init);
 
     const { ref } = useParams();
 
     useEffect(() => {
-        setSection('我的论文')
+        setSection("我的论文");
         if (ref !== "new") {
-            loadArticle(ref);
+            loadFocusArticle(ref);
         }
     }, []);
 
     useEffect(() => {
-        if (Object.keys(content).length > 0) {
-            const newState = formData
-            Object.keys(init).forEach((key)=>{
-                newState[key] = content[key]
-            })
-            setFormData(newState)
-            clearArticleCache()
+        if (Object.keys(focusArticle).length > 0) {
+            const newState = formData;
+            Object.keys(init).forEach((key) => {
+                newState[key] = focusArticle[key];
+            });
+            setFormData(newState);
         }
-    });
+    }, [focusArticle]);
 
     const setFieldData = (e) => {
         setFormData({
@@ -329,6 +327,9 @@ const ArticleSettings = ({ alerts, article: {loading, content}, loadArticle, upd
                                 </div>
 
                                 <div className="text-right">
+                                    <Link to="/dashboard/articles" className="btn btn-secondary btn-lg mr-3">
+                                        返回
+                                    </Link>
                                     <button type="submit" className="btn btn-primary btn-lg">
                                         确认信息
                                     </button>
@@ -344,16 +345,15 @@ const ArticleSettings = ({ alerts, article: {loading, content}, loadArticle, upd
 
 ArticleSettings.propTypes = {
     alerts: PropTypes.array.isRequired,
-    article: PropTypes.object.isRequired,
-    loadArticle: PropTypes.func.isRequired,
+    focusArticle: PropTypes.object.isRequired,
+    loadFocusArticle: PropTypes.func.isRequired,
     updateArticle: PropTypes.func.isRequired,
-    clearArticleCache: PropTypes.func.isRequired,
     setSection: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     alerts: state.alert,
-    article: state.article,
+    focusArticle: state.article.focusArticle,
 });
 
-export default connect(mapStateToProps, { loadArticle, updateArticle, clearArticleCache, setSection })(ArticleSettings);
+export default connect(mapStateToProps, { loadFocusArticle, updateArticle, setSection })(ArticleSettings);

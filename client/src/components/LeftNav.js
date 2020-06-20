@@ -34,13 +34,13 @@ const LeftNav = ({ logout, currentSection }) => {
                 <div className="collapse navbar-collapse" id="sidenav-collapse-main">
                     <ul className="navbar-nav">
                         <li className="nav-item">
-                            <Link className="nav-link" to="/profile" data-section="我的信息">
+                            <Link className="nav-link" to="/dashboard/profile" data-section="我的信息">
                                 <i className="fas fa-user text-blue"></i>
                                 我的信息
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/articles" data-section="我的论文">
+                            <Link className="nav-link" to="/dashboard/articles" data-section="我的论文">
                                 <i className="fas fa-book text-orange"></i>
                                 我的论文
                             </Link>
@@ -52,13 +52,13 @@ const LeftNav = ({ logout, currentSection }) => {
                             </a>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/about" data-section="关于作者">
+                            <Link className="nav-link" to="/dashboard/about" data-section="关于作者">
                                 <i className="fas fa-glasses text-success"></i>
                                 关于作者
                             </Link>
                         </li>
                         <li className="nav-item">
-                            <Link className="nav-link" to="/readme" data-section="用户须知">
+                            <Link className="nav-link" to="/dashboard/readme" data-section="用户须知">
                                 <i className="fas fa-file-alt text-info"></i>
                                 用户须知
                             </Link>

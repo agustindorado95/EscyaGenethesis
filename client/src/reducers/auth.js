@@ -18,7 +18,6 @@ const initialState = {
         lastName: '',
         avatar: 'default.jpg',
         timeCreated: new Date(),
-        articles: []
     },
 };
 
@@ -37,7 +36,7 @@ export default (state = initialState, action) => {
         case USER_LOADING:
             return {
                 ...state,
-                isAuthenticated: true,
+                isAuthenticated: false,
                 loading: true,
             };
         case USER_LOADED:

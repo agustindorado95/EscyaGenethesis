@@ -3,6 +3,7 @@ import {
     BrowserRouter as Router,
     Route,
     Switch,
+    Redirect
 } from "react-router-dom";
 
 import Alert from "./components/Alert";
@@ -36,7 +37,8 @@ const App = () => {
                     <Switch>
                         <Route exact path="/register" component={Register} />
                         <Route exact path="/login" component={Login} />
-                        <PrivateRoute component={Dashboard} />
+                        <PrivateRoute path="/dashboard" component={Dashboard} />
+                        <Redirect from="/" to="/login"/>
                     </Switch>
                     <Alert />
                 </Fragment>

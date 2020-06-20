@@ -1,30 +1,53 @@
-import { LOAD_ARTICLE_START, LOAD_ARTICLE_SUCCESS, LOAD_ARTICLE_FAIL, CLEAR_ARTICLE_CACHE } from "../actions/types";
+import {
+    ARTICLE_LOADING_START,
+    ARTICLE_LOADING_END,
+    LOAD_USER_ARTICLES_SUCCESS,
+    LOAD_USER_ARTICLES_FAIL,
+    LOAD_FOCUS_ARTICLE_SUCCESS,
+    LOAD_FOCUS_ARTICLE_FAIL,
+} from "../actions/types";
 
 const initialState = {
     loading: false,
-    content: {}
+    userArticles: [],
+    focusArticle: {},
 };
 
 export default (state = initialState, action) => {
     const { type, payload } = action;
     switch (type) {
-        case LOAD_ARTICLE_START:
+        case ARTICLE_LOADING_START:
             return {
                 ...state,
                 loading: true,
             };
-        case LOAD_ARTICLE_SUCCESS:
+        case LOAD_USER_ARTICLES_SUCCESS:
+            return {
+                ...state,
+                userArticles: payload,
+            };
+        case LOAD_FOCUS_ARTICLE_SUCCESS:
+            return {
+                ...state,
+                focusArticle: payload,
+            };
+        case LOAD_USER_ARTICLES_FAIL:
             return {
                 ...state,
                 loading: false,
-                content: payload
+                userArticles: [],
             };
-        case LOAD_ARTICLE_FAIL:
-        case CLEAR_ARTICLE_CACHE:
+        case LOAD_FOCUS_ARTICLE_FAIL:
             return {
+                ...state,
                 loading: false,
-                content: {}
-            }
+                focusArticle: {},
+            };
+        case ARTICLE_LOADING_END:
+            return {
+                ...state,
+                loading: false,
+            };
         default:
             return state;
     }

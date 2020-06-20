@@ -18,20 +18,22 @@ const Dashboard = ({ auth, article, redirect }) => {
         <Fragment>
             <LeftNav />
             <div className="main-content">
+                <div className="calc-height-before-footer">
                 <TopNav />
                 <div className="container-fluid mt--7">
                     {auth.loading || article.loading ? <Loader /> : null}
                     {redirect && <Redirect to={redirect} />}
                     <Switch>
-                        <Route exact path="/about" component={About} />
-                        <Route exact path="/readme" component={Readme} />
-                        <Route exact path="/profile" component={Profile} />
-                        <Route exact path="/articles/:ref" component={ArticleSettings} />
-                        <Route exact path="/articles" component={ArticleList} />
-                        <Redirect from="/" to="/profile" />
+                        <Route exact path="/dashboard/about" component={About} />
+                        <Route exact path="/dashboard/readme" component={Readme} />
+                        <Route exact path="/dashboard/profile" component={Profile} />
+                        <Route exact path="/dashboard/articles/:ref" component={ArticleSettings} />
+                        <Route exact path="/dashboard/articles" component={ArticleList} />
+                        <Redirect from="/dashboard" to="/dashboard/profile" />
                     </Switch>
-                    <Footer />
                 </div>
+                </div>
+                <Footer />
             </div>
         </Fragment>
     );

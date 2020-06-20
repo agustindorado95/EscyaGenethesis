@@ -8,17 +8,36 @@ const Article = require("../../models/Article");
 const User = require("../../models/User");
 
 // @route    GET api/articles/
-// @func     Get all articles of current user
+// @func     Get all articles of current user, metadata only
 // @access   Private
 router.get("/", userRequired, async (req, res) => {
     try {
         const articles = await Article.find({
             user: req.user.id,
-        });
+        }).select([
+            "language",
+            "tutor",
+            "status",
+            "title",
+            "titleSecondLanguage",
+            "subTitle",
+            "subTitleSecondLanguage",
+            "keywords",
+            "keywordsSecondLanguage",
+            "timeCreated",
+            "timeEdited",
+        ]);
         return res.json(articles);
     } catch (error) {
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `用户论文加载失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 
@@ -32,7 +51,7 @@ router.get("/:id", userRequired, async (req, res) => {
             return res.status(404).json({
                 errors: [
                     {
-                        msg: '论文加载失败。',
+                        msg: "没有找到对应的论文。",
                         location: "banner",
                     },
                 ],
@@ -43,7 +62,7 @@ router.get("/:id", userRequired, async (req, res) => {
             return res.status(403).json({
                 errors: [
                     {
-                        msg: '您只能访问属于您自己的论文。',
+                        msg: "您只能访问属于您自己的论文。",
                         location: "banner",
                     },
                 ],
@@ -54,7 +73,49 @@ router.get("/:id", userRequired, async (req, res) => {
         return res.status(404).json({
             errors: [
                 {
-                    msg: '论文加载失败。',
+                    msg: "没有找到对应的论文。",
+                    location: "banner",
+                },
+            ],
+        });
+    }
+});
+
+// @route    PUT api/articles/:id/markstatus/:status
+// @func     Mark the status of an article
+// @access   Private
+router.put("/:id/markstatus", userRequired, async (req, res) => {
+    try {
+        const article = await Article.findById(req.params.id);
+        if (!article) {
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
+        }
+        const user = await User.findById(req.user.id).select("-password");
+        if ((article.user != user.id) & !user.admin) {
+            return res.status(403).json({
+                errors: [
+                    {
+                        msg: "您只能访问属于您自己的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
+        }
+        article.status = req.body.status
+        await article.save()
+        return res.json(article);
+    } catch (error) {
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `论文标记失败，因为${error.message}`,
                     location: "banner",
                 },
             ],
@@ -71,7 +132,7 @@ router.post("/:id", [userRequired, articleCheck], async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     try {
-        let article = null
+        let article = null;
         if (req.params.id == "new") {
             article = new Article({
                 user: req.user.id,
@@ -157,7 +218,7 @@ router.post("/:id", [userRequired, articleCheck], async (req, res) => {
         return res.status(500).json({
             errors: [
                 {
-                    msg: error.message,
+                    msg: `论文设置更新失败，因为${error.message}`,
                     location: "banner",
                 },
             ],

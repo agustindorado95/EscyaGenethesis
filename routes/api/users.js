@@ -80,9 +80,7 @@ router.post("/register", registerCheck, async (req, res) => {
 router.get("/load", userRequired, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select("-password");
-        const articles = await user.getArticlesMetadata()
-        const userWithArticles = Object.assign(articles, user._doc)
-        return res.json(userWithArticles);
+        return res.json(user);
     } catch (error) {
         console.log(error.message);
         return res.status(500).send("Internal server error.");

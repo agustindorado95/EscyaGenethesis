@@ -56,14 +56,4 @@ const UserSchema = new mongoose.Schema({
     },
 }, { strict: false });
 
-UserSchema.methods.getArticlesMetadata = async function () {
-    try {
-        const articles = await Article.find({ user: this.id }).select(['title', 'status', 'tutor', 'language'])
-        return { articles: articles };
-    } catch (error) {
-        console.log(error);
-        return { articles: [] };
-    }
-};
-
 module.exports = User = mongoose.model("user", UserSchema);
