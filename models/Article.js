@@ -10,18 +10,18 @@ const ArticleSchema = new mongoose.Schema({
     },
     language: {
         type: String,
-        required: true
+        required: true,
     },
     tutor: {
         type: String,
     },
     status: {
         type: String,
-        default: 'progress'
+        default: "progress",
     },
     title: {
         type: String,
-        required: true
+        required: true,
     },
     titleSecondLanguage: {
         type: String,
@@ -39,7 +39,8 @@ const ArticleSchema = new mongoose.Schema({
         type: String,
     },
     introduction: {
-        type: String,
+        type: Object,
+        default: { title: "", content: "" },
     },
     keywords: {
         type: String,
@@ -55,11 +56,11 @@ const ArticleSchema = new mongoose.Schema({
     },
     font: {
         type: String,
-        default: 'Times New Roman'
+        default: "Times New Roman",
     },
     fontSecondLanguage: {
         type: String,
-        default: 'Times New Roman'
+        default: "Times New Roman",
     },
     marginLeft: {
         type: Number,
@@ -103,55 +104,55 @@ const ArticleSchema = new mongoose.Schema({
     },
     headingLineSpacing: {
         type: Number,
-        default: 1.5
+        default: 1.5,
     },
     tocLineSpacing: {
         type: Number,
-        default: 1.5
+        default: 1.5,
     },
     bodyLineSpacing: {
         type: Number,
-        default: 1.5
+        default: 1.5,
     },
     imageCommentLineSpacing: {
         type: Number,
-        default: 1
+        default: 1,
     },
     referenceLineSpacing: {
         type: Number,
-        default: 1.5
+        default: 1.5,
     },
     bibliographyLineSpacing: {
         type: Number,
-        default: 1.5
+        default: 1.5,
     },
     headingAfterSpacing: {
         type: Number,
-        default: 10
+        default: 10,
     },
     bodyAfterSpacing: {
         type: Number,
-        default: 5
+        default: 5,
     },
     tocIndentGrowth: {
         type: Number,
-        default: 0
+        default: 0,
     },
     bodyIndent: {
         type: Number,
-        default: 0.75
+        default: 0.75,
     },
     timeCreated: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     timeEdited: {
         type: Date,
-        default: Date.now
+        default: Date.now,
     },
     chapters: [
         {
-            order: {
+            index: {
                 type: String,
                 require: true,
                 // '1' / '2.3' / '3.1.4'
@@ -164,6 +165,10 @@ const ArticleSchema = new mongoose.Schema({
             },
             tailContent: {
                 type: String,
+            },
+            timeCreated: {
+                type: Date,
+                default: Date.now,
             },
             timeEdited: {
                 type: Date,

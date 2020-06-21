@@ -77,6 +77,7 @@ export const textAreaField = (formData, setFieldData, alerts, fieldName, placeho
                 value={formData[fieldName]}
                 onChange={setFieldData}
                 required={params.required ? true : false}
+                rows={params.rows ? params.rows : 2}
             ></textarea>
             {alerts.filter((alert) => alert.param === fieldName).length > 0 && (
                 <div className="invalid-feedback">

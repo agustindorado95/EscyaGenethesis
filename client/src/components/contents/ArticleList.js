@@ -3,12 +3,12 @@ import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { setSection } from "../../actions/section";
-import { loadUserArticles, clearFocusArticle, markArticleStatus } from "../../actions/article";
+import { loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle } from "../../actions/article";
 
-const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArticle, markArticleStatus }) => {
+const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle }) => {
     useEffect(() => {
         setSection("我的论文");
-        clearFocusArticle()
+        clearFocusArticle();
         loadUserArticles();
     }, []);
 
@@ -25,7 +25,7 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                 <h3 className="mb-0">我的所有论文 ({userArticles.length})</h3>
                             </div>
                             <div className="col-4 text-right">
-                                <Link to="/dashboard/articles/new" className="btn btn-primary btn-sm">
+                                <Link to="/dashboard/articles/new/settings" className="btn btn-primary btn-sm">
                                     新建论文
                                 </Link>
                             </div>
@@ -51,9 +51,9 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                                 <div className="media-body">
                                                     {article.status === "finalized" && <span className="mb-0 text-sm text-dark">{article.title}</span>}
                                                     {article.status === "progress" && (
-                                                        <a href="{{ url_for('articles.single_article', article_id=article.id) }}" className="text-dark">
+                                                        <Link to={`/dashboard/articles/${article._id}`} className="text-dark">
                                                             <span className="mb-0 text-sm">{article.title}</span>
-                                                        </a>
+                                                        </Link>
                                                     )}
                                                 </div>
                                             </div>
@@ -89,12 +89,17 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                         <td>
                                             {article.status === "finalized" && (
                                                 <Fragment>
-                                                    <button className="btn-none articles-action delete pr-2 pl-0" data-id="{{ article.id }}">
+                                                    <button
+                                                        className="btn-none articles-action delete pr-2 pl-0"
+                                                        onClick={() => {
+                                                            deleteArticle({ articleId: article._id });
+                                                        }}
+                                                    >
                                                         <i className="fas fa-trash-alt text-danger"></i>
                                                     </button>
                                                     <span
                                                         onClick={() => {
-                                                            markArticleStatus({ id: article._id, status: "progress" });
+                                                            markArticleStatus({ articleId: article._id, status: "progress" });
                                                         }}
                                                         className="cursor-pointer pr-2"
                                                     >
@@ -113,24 +118,18 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                                 <Fragment>
                                                     <span
                                                         onClick={() => {
-                                                            markArticleStatus({ id: article._id, status: "finalized" });
+                                                            markArticleStatus({ articleId: article._id, status: "finalized" });
                                                         }}
                                                         className="cursor-pointer pr-2"
                                                     >
                                                         <i className="fas fa-check-circle text-success"></i>
                                                     </span>
-                                                    <Link to={"/dashboard/articles/" + article._id} className="pr-2">
+                                                    <Link to={`/dashboard/articles/${article._id}/settings`} className="pr-2">
                                                         <i className="fas fa-cog text-primary"></i>
                                                     </Link>
-                                                    <a
-                                                        href="{{ url_for('articles.single_article', article_id=article.id) }}"
-                                                        className="articles-action write pr-2"
-                                                    >
+                                                    <Link to={`/dashboard/articles/${article._id}`} className="pr-2">
                                                         <i className="fas fa-pen-nib text-primary"></i>
-                                                    </a>
-                                                    <button className="btn-none articles-action preview pr-2 pl-0" data-id="{{ article.id }}">
-                                                        <i className="fas fa-eye text-primary" data-id="{{ article.id }}"></i>
-                                                    </button>
+                                                    </Link>
                                                 </Fragment>
                                             )}
                                         </td>
@@ -225,10 +224,11 @@ ArticleList.propTypes = {
     loadUserArticles: PropTypes.func.isRequired,
     clearFocusArticle: PropTypes.func.isRequired,
     markArticleStatus: PropTypes.func.isRequired,
+    deleteArticle: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
     userArticles: state.article.userArticles,
 });
 
-export default connect(mapStateToProps, { setSection, loadUserArticles,clearFocusArticle, markArticleStatus })(ArticleList);
+export default connect(mapStateToProps, { setSection, loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle })(ArticleList);

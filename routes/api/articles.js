@@ -2,14 +2,15 @@ const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
 const { articleCheck, articleSettingsCheck } = require("../../middleware/validators");
+const { sortByObjectIndex } = require("../../middleware/utils")
 const userRequired = require("../../middleware/tokenVarifier");
 
 const Article = require("../../models/Article");
 const User = require("../../models/User");
 
-// @route    GET api/articles/
-// @func     Get all articles of current user, metadata only
-// @access   Private
+// @路径    GET api/articles/
+// @功能    获取论文所属用户的所有论文的基础信息
+// @权限    论文所属用户或管理员
 router.get("/", userRequired, async (req, res) => {
     try {
         const articles = await Article.find({
@@ -41,12 +42,12 @@ router.get("/", userRequired, async (req, res) => {
     }
 });
 
-// @route    GET api/articles/:id
-// @func     Get article by id
-// @access   Private
-router.get("/:id", userRequired, async (req, res) => {
+// @路径    GET api/articles/:articleId
+// @功能    获取ID为articleId的论文信息，包含排序后的章节
+// @权限    论文所属用户或管理员
+router.get("/:articleId", userRequired, async (req, res) => {
     try {
-        const article = await Article.findById(req.params.id);
+        const article = await Article.findById(req.params.articleId);
         if (!article) {
             return res.status(404).json({
                 errors: [
@@ -58,7 +59,7 @@ router.get("/:id", userRequired, async (req, res) => {
             });
         }
         const user = await User.findById(req.user.id).select("-password");
-        if ((article.user != user.id) & !user.admin) {
+        if (article.user != user.id && !user.admin) {
             return res.status(403).json({
                 errors: [
                     {
@@ -68,8 +69,10 @@ router.get("/:id", userRequired, async (req, res) => {
                 ],
             });
         }
+        article.chapters.sort(sortByObjectIndex)
         return res.json(article);
     } catch (error) {
+        console.log(error)
         return res.status(404).json({
             errors: [
                 {
@@ -81,12 +84,12 @@ router.get("/:id", userRequired, async (req, res) => {
     }
 });
 
-// @route    PUT api/articles/:id/markstatus/:status
-// @func     Mark the status of an article
-// @access   Private
-router.put("/:id/markstatus", userRequired, async (req, res) => {
+// @路径    PUT api/articles/:articleId/markstatus
+// @功能    更改ID为articleId的论文的状态 (progress / finalized)
+// @权限    论文所属用户或管理员
+router.put("/:articleId/markstatus", userRequired, async (req, res) => {
     try {
-        const article = await Article.findById(req.params.id);
+        const article = await Article.findById(req.params.articleId);
         if (!article) {
             return res.status(404).json({
                 errors: [
@@ -98,7 +101,7 @@ router.put("/:id/markstatus", userRequired, async (req, res) => {
             });
         }
         const user = await User.findById(req.user.id).select("-password");
-        if ((article.user != user.id) & !user.admin) {
+        if (article.user != user.id && !user.admin) {
             return res.status(403).json({
                 errors: [
                     {
@@ -108,8 +111,8 @@ router.put("/:id/markstatus", userRequired, async (req, res) => {
                 ],
             });
         }
-        article.status = req.body.status
-        await article.save()
+        article.status = req.body.status;
+        await article.save();
         return res.json(article);
     } catch (error) {
         return res.status(500).json({
@@ -123,17 +126,17 @@ router.put("/:id/markstatus", userRequired, async (req, res) => {
     }
 });
 
-// @route    POST api/articles/:id (or 'new')
-// @func     Create an article or update it
-// @access   Requires current user
-router.post("/:id", [userRequired, articleCheck], async (req, res) => {
+// @路径    POST api/articles/:articleId/settings
+// @功能    更新ID为articleId的论文设置信息，或创建新论文条目
+// @权限    论文所属用户或管理员
+router.post("/:articleId/settings", [userRequired, articleCheck], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }
     try {
         let article = null;
-        if (req.params.id == "new") {
+        if (req.params.articleId == "new") {
             article = new Article({
                 user: req.user.id,
                 language: req.body.language,
@@ -166,11 +169,12 @@ router.post("/:id", [userRequired, articleCheck], async (req, res) => {
                 bodyAfterSpacing: req.body.bodyAfterSpacing,
                 tocIndentGrowth: req.body.tocIndentGrowth,
                 bodyIndent: req.body.bodyIndent,
+                chapters: []
             });
         } else {
-            article = await Article.findById(req.params.id);
+            article = await Article.findById(req.params.articleId);
             const user = await User.findById(req.user.id).select("-password");
-            if ((article.user != user.id) & !user.admin) {
+            if (article.user != user.id && !user.admin) {
                 return res.status(403).json({
                     errors: [
                         {
@@ -226,59 +230,184 @@ router.post("/:id", [userRequired, articleCheck], async (req, res) => {
     }
 });
 
-// @route    GET api/articles/:articleId/chapters/:chapterId
-// @func     Get chapter of article by id
-// @access   Private
-router.get("/:articleId/chapters/:chapterId", userRequired, async (req, res) => {
+// @路径    DELETE api/articles/:articleId
+// @功能    删除ID为articleId的论文条目
+// @权限    论文所属用户或管理员
+router.delete("/:articleId", userRequired, async (req, res) => {
     try {
-        const article = await Article.findById(req.params.id);
+        const article = await Article.findById(req.params.articleId);
         if (!article) {
-            return res.status(404).json({ msg: "Article not found." });
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
         }
         const user = await User.findById(req.user.id).select("-password");
-        if ((article.user != user.id) & !user.admin) {
-            return res.status(403).json({ msg: "Article does not belong to you." });
+        if (article.user != user.id && !user.admin) {
+            return res.status(403).json({
+                errors: [
+                    {
+                        msg: "您只能访问属于您自己的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
         }
-        const chapter = await article.chapters.find((chapter) => chapter.id === req.params.chapterId);
-        if (!chapter) {
-            return res.status(404).json({ msg: "Chapter not found." });
-        }
-        return res.json(chapter);
+        await article.remove();
+        return res.status(200).send('success');
     } catch (error) {
-        if (error.name == "CastError") return res.status(404).json({ msg: "Chapter not found." });
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        if (error.name == "CastError")
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `删除论文失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 
-// @route    POST api/articles/:articleId/chapters/:chapterId (or 'new')
-// @func     Create a new chapter or update a chapter's content
-// @access   Private
-router.post("/:articleId/chapters/:chapterId", userRequired, async (req, res) => {
+
+// @路径    GET api/articles/:articleId/chapters/:chapterId
+// @功能    获取ID为chapterId的章节信息
+// @权限    论文所属用户或管理员
+router.get("/:articleId/chapters/:chapterId", userRequired, async (req, res) => {
     try {
-        const article = await Article.findById(req.params.id);
+        const article = await Article.findById(req.params.articleId);
         if (!article) {
-            return res.status(404).json({ msg: "Article not found." });
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
         }
         const user = await User.findById(req.user.id).select("-password");
-        if ((article.user != user.id) & !user.admin) {
-            return res.status(403).json({ msg: "Article does not belong to you." });
+        if (article.user != user.id && !user.admin) {
+            return res.status(403).json({
+                errors: [
+                    {
+                        msg: "您只能访问属于您自己的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
         }
+        const chapter = await article.chapters.find(
+            (chapter) => chapter.id === req.params.chapterId
+        );
+        if (!chapter) {
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的章节。",
+                        location: "banner",
+                    },
+                ],
+            });
+        }
+        return res.json(chapter);
+    } catch (error) {
+        if (error.name == "CastError")
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的章节。",
+                        location: "banner",
+                    },
+                ],
+            });
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `加载论文章节失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
+    }
+});
+
+// @路径    POST api/articles/:articleId/chapters/:chapterId
+// @功能    更新ID为chapterId的章节信息，或创建新章节条目
+// @权限    论文所属用户或管理员
+router.post("/:articleId/chapters/:chapterId", userRequired, async (req, res) => {
+    try {
+        if (!/^\d+$/.test(req.body.index.replace(/\./g,''))) {
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "章节号格式错误。",
+                        param: "index",
+                        location: "body",
+                    },
+                ],
+            });
+        }
+        const article = await Article.findById(req.params.articleId);
+        if (!article) {
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
+        }
+        const user = await User.findById(req.user.id).select("-password");
+        if (article.user != user.id && !user.admin) {
+            return res.status(403).json({
+                errors: [
+                    {
+                        msg: "您只能访问属于您自己的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
+        }
+
+        let chapter = null;
         if (req.params.chapterId == "new") {
             chapter = {
-                order: req.body.order,
+                index: req.body.index,
                 title: req.body.title,
                 content: req.body.content,
                 tailContent: req.body.tailContent,
-                timeEdited: Date.now(),
             };
             article.chapters.push(chapter);
         } else {
-            const chapter = await article.chapters.find((chapter) => chapter.id === req.params.chapterId);
+            chapter = await article.chapters.find(
+                (c) => c.id === req.params.chapterId
+            );
             if (!chapter) {
-                return res.status(404).json({ msg: "Chapter not found." });
+                return res.status(404).json({
+                    errors: [
+                        {
+                            msg: "没有找到对应的章节。",
+                            location: "banner",
+                        },
+                    ],
+                });
             }
-            chapter.order = req.body.order;
+            chapter.index = req.body.index;
             chapter.title = req.body.title;
             chapter.content = req.body.content;
             chapter.tailContent = req.body.tailContent;
@@ -286,39 +415,94 @@ router.post("/:articleId/chapters/:chapterId", userRequired, async (req, res) =>
         }
         article.timeEdited = Date.now();
         await article.save();
-        return res.json(chapter);
+        return res.json(article);
     } catch (error) {
-        if (error.name == "CastError") return res.status(404).json({ msg: "Chapter not found." });
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        if (error.name == "CastError")
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的章节。",
+                        location: "banner",
+                    },
+                ],
+            });
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `更新章节信息失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 
-// @route    DELETE api/articles/:articleId/chapters/:chapterId
-// @func     Delete a chapter
-// @access   Private
+// @路径    DELETE api/articles/:articleId/chapters/:chapterId
+// @功能    删除ID为chapterId的章节条目
+// @权限    论文所属用户或管理员
 router.delete("/:articleId/chapters/:chapterId", userRequired, async (req, res) => {
     try {
-        const article = await Article.findById(req.params.id);
+        const article = await Article.findById(req.params.articleId);
         if (!article) {
-            return res.status(404).json({ msg: "Article not found." });
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
         }
         const user = await User.findById(req.user.id).select("-password");
-        if ((article.user != user.id) & !user.admin) {
-            return res.status(403).json({ msg: "Article does not belong to you." });
+        if (article.user != user.id && !user.admin) {
+            return res.status(403).json({
+                errors: [
+                    {
+                        msg: "您只能访问属于您自己的论文。",
+                        location: "banner",
+                    },
+                ],
+            });
         }
-        const chapter = await article.chapters.find((chapter) => chapter.id === req.params.chapterId);
+        const chapter = await article.chapters.find(
+            (chapter) => chapter.id === req.params.chapterId
+        );
         if (!chapter) {
-            return res.status(404).json({ msg: "Chapter not found." });
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的章节。",
+                        location: "banner",
+                    },
+                ],
+            });
         }
-        const removeIndex = article.chapters.map((chapter) => chapter.id.toString()).indexOf(req.params.chapterId);
+        const removeIndex = article.chapters
+            .map((chapter) => chapter.id.toString())
+            .indexOf(req.params.chapterId);
         article.chapters.splice(removeIndex, 1);
         await article.save();
         return res.json(article);
     } catch (error) {
-        if (error.name == "CastError") return res.status(404).json({ msg: "Chapter not found." });
-        console.log(error.message);
-        return res.status(500).send("Internal server error.");
+        if (error.name == "CastError")
+            return res.status(404).json({
+                errors: [
+                    {
+                        msg: "没有找到对应的章节。",
+                        location: "banner",
+                    },
+                ],
+            });
+        console.log(error);
+        return res.status(500).json({
+            errors: [
+                {
+                    msg: `删除章节失败，因为${error.message}`,
+                    location: "banner",
+                },
+            ],
+        });
     }
 });
 

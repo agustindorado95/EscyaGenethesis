@@ -42,12 +42,12 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
     };
     const [formData, setFormData] = useState(init);
 
-    const { ref } = useParams();
+    const { articleId } = useParams();
 
     useEffect(() => {
         setSection("我的论文");
-        if (ref !== "new") {
-            loadFocusArticle(ref);
+        if (articleId !== "new") {
+            loadFocusArticle(articleId);
         }
     }, []);
 
@@ -70,7 +70,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
 
     const submitForm = (e) => {
         e.preventDefault();
-        updateArticle({ ...formData, ref: ref });
+        updateArticle({ ...formData, articleId: articleId });
     };
 
     return (

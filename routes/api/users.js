@@ -173,7 +173,6 @@ router.post("/login", loginCheck, async (req, res) => {
 // @access   Private
 router.post("/me", [userRequired, userProfileCheck], async (req, res) => {
     const errors = validationResult(req);
-    console.log(errors)
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
     }

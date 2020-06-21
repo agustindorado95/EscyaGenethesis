@@ -47,10 +47,8 @@
         height: 32px;
     }
 }
-@media (max-width: 768px)
-{
-    .lds-facebook
-    {
+@media (max-width: 768px) {
+    .lds-facebook {
         left: 50%;
     }
 }
@@ -71,22 +69,21 @@ body {
 
 .auth-bg {
     background-color: #172b4d !important;
-    top:0;
-    left:0;
-    min-height:100vh;
-    width:100vw
+    top: 0;
+    left: 0;
+    min-height: 100vh;
+    width: 100vw;
 }
 
-
-.hidden{
-    visibility:hidden;
-    width:0px!important;
-    height:0px!important;
-    margin:0px!important;
-    padding:0px!important;
+.hidden {
+    visibility: hidden;
+    width: 0px !important;
+    height: 0px !important;
+    margin: 0px !important;
+    padding: 0px !important;
 }
 .no-display {
-    display:none !important;
+    display: none !important;
 }
 
 .bg-dark-green {
@@ -113,9 +110,24 @@ body {
 .text-dark-blue {
     color: #0053a7 !important;
 }
+
+.text-hover-primary:hover {
+    color: #0275d8;
+}
+.text-hover-danger:hover {
+    color: #d9534f;
+}
+.text-hover-success:hover {
+    color: #5cb85c;
+}
+.text-hover-warning:hover {
+    color: #f0ad4e;
+}
+
 .font-weight-normal {
     font-weight: 200 !important;
 }
+
 .disabled {
     cursor: default;
     pointer-events: none;
@@ -137,7 +149,8 @@ body {
 
 .is-avatar-upload,
 .is-signature-upload,
-.is-illustration-upload, .is-illustration-upload-button {
+.is-illustration-upload,
+.is-illustration-upload-button {
     display: none;
 }
 
@@ -145,7 +158,16 @@ body {
     pointer-events: none;
 }
 .cursor-pointer {
-    cursor: pointer;;
+    cursor: pointer;
+}
+
+.input-group-border-bottom-only > .input-group-prepend > .input-group-text,
+.input-group-border-bottom-only > .input-group-append > .input-group-text,
+.input-group-border-bottom-only > .form-control {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: "0";
 }
 
 .btn-none {
@@ -158,7 +180,7 @@ body {
     cursor: pointer;
 }
 .card-profile-image::before {
-    content: '更改头像';
+    content: "更改头像";
     display: block;
     text-align: center;
     pointer-events: none;
@@ -175,17 +197,17 @@ body {
     z-index: 999;
 }
 .card-profile-image::after {
-    content: '';
+    content: "";
     position: absolute;
     pointer-events: none;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     width: 180px;
     height: 180px;
     left: 50%;
     transform: translate(-50%, -30%);
     opacity: 0;
     border-radius: 50%;
-    transition: all .15s ease; 
+    transition: all 0.15s ease;
 }
 .card-profile-image:hover::after {
     transform: translate(-50%, -33%);
@@ -223,7 +245,7 @@ body {
     top: 15px;
     font-size: 15px;
     color: #99999975;
-    transition: color .15s ease;
+    transition: color 0.15s ease;
 }
 .grid-item .illustration-delete {
     top: 35px;
@@ -235,18 +257,24 @@ body {
     color: #ff5555;
 }
 
-.chapter-title-input, .subchapter-title-input, .scsubchapter-title-input {
+.chapter-title-input,
+.subchapter-title-input,
+.scsubchapter-title-input {
     border: none;
     width: calc(100% - 5rem);
     margin-top: 15px;
     padding-left: 10px;
     font-size: 14px;
 }
-.chapter-title-input:focus, .subchapter-title-input:focus, .scsubchapter-title-input:focus {
+.chapter-title-input:focus,
+.subchapter-title-input:focus,
+.scsubchapter-title-input:focus {
     box-shadow: none !important;
     outline: none !important;
 }
-.chapter-title-input::placeholder, .subchapter-title-input::placeholder, .scsubchapter-title-input::placeholder {
+.chapter-title-input::placeholder,
+.subchapter-title-input::placeholder,
+.scsubchapter-title-input::placeholder {
     color: #bdbdbd;
 }
 .actions {
@@ -285,17 +313,17 @@ body {
     display: inline-block;
     width: 52px;
     height: 28px;
-  }
-  
-  /* Hide default HTML checkbox */
-  .switch input {
+}
+
+/* Hide default HTML checkbox */
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
-  }
-  
-  /* The slider */
-  .slider {
+}
+
+/* The slider */
+.slider {
     position: absolute;
     cursor: pointer;
     top: 0;
@@ -303,11 +331,11 @@ body {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  .slider:before {
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+.slider:before {
     position: absolute;
     content: "";
     height: 20px;
@@ -315,38 +343,38 @@ body {
     left: 4px;
     bottom: 4px;
     background-color: white;
-    -webkit-transition: .4s;
-    transition: .4s;
-  }
-  
-  .input-toggle:checked + .slider {
-    background-color: #2196F3;
-  }
-  
-  .input-toggle:focus + .slider {
-    box-shadow: 0 0 1px #2196F3;
-  }
-  
-  .input-toggle:checked + .slider:before {
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+.input-toggle:checked + .slider {
+    background-color: #2196f3;
+}
+
+.input-toggle:focus + .slider {
+    box-shadow: 0 0 1px #2196f3;
+}
+
+.input-toggle:checked + .slider:before {
     -webkit-transform: translateX(26px);
     -ms-transform: translateX(26px);
     transform: translateX(26px);
-  }
-  
-  /* Rounded sliders */
-  .slider.round {
+}
+
+/* Rounded sliders */
+.slider.round {
     border-radius: 34px;
-  }
-  
-  .slider.round:before {
+}
+
+.slider.round:before {
     border-radius: 50%;
-  }
+}
 
 .edit-tools button {
     -moz-user-select: none;
     -khtml-user-select: none;
     -webkit-user-select: none;
- 
+
     /*
       Introduced in IE 10.
       See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
@@ -393,12 +421,16 @@ code {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 .fa-sticky-note.quill-toolbar-icon {
-    transform: translateY(-3px) scale(0.9)
+    transform: translateY(-3px) scale(0.9);
 }
 
 .og-content {
@@ -416,7 +448,7 @@ code {
     margin-bottom: 10px;
 }
 .toc-container::after {
-    content:'';
+    content: "";
     position: absolute;
     left: -15px;
     top: 0;
@@ -428,8 +460,8 @@ code {
     padding-top: 0;
     margin-bottom: 0;
 }
-a.toc-link::before{
-    display: none !important
+a.toc-link::before {
+    display: none !important;
 }
 
 #main-doc p {
@@ -439,8 +471,6 @@ a.toc-link::before{
     margin: 20px 0;
     width: 80%;
 }
-
-
 
 /* Flipping card */
 
@@ -483,6 +513,7 @@ a.toc-link::before{
     width: 100%;
     height: 100%;
     cursor: pointer;
+    backface-visibility: hidden;
     -moz-backface-visibility: hidden;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
@@ -499,6 +530,7 @@ a.toc-link::before{
     width: 100%;
     height: 100%;
     cursor: pointer;
+    backface-visibility: hidden;
     -moz-backface-visibility: hidden;
     -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
@@ -536,7 +568,7 @@ a.toc-link::before{
 }
 
 .stackedCard .stackEffect::after {
-    content: '';
+    content: "";
     position: absolute;
     right: -5px;
     top: -2px;
@@ -563,7 +595,7 @@ a.toc-link::before{
     transition: all, 0.15s;
 }
 
-.cardContainer:hover .stackedCard{
+.cardContainer:hover .stackedCard {
     -webkit-transform: translateZ(0px);
     transform: translateZ(0px);
 }
@@ -631,7 +663,7 @@ a.toc-link::before{
     width: 100%;
     height: 100px;
     overflow: hidden;
-    text-align: right
+    text-align: right;
 }
 
 .front .cardTitle span {
@@ -648,7 +680,6 @@ a.toc-link::before{
     font-size: 7rem;
     bottom: -50px;
 }
-
 
 .back {
     position: relative;
@@ -706,7 +737,7 @@ a.toc-link::before{
     max-height: 227px;
     overflow: hidden;
 }
-  
+
 .cardModal {
     height: 0.1px;
     width: 0.1px;
@@ -724,7 +755,7 @@ a.toc-link::before{
     z-index: 9999;
     pointer-events: none;
 }
-.cardModal.shown .cardModal-overlay{
+.cardModal.shown .cardModal-overlay {
     background: rgba(0, 0, 0, 0.8);
     pointer-events: all;
 }

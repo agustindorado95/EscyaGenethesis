@@ -36,12 +36,12 @@ export const loadUserArticles = () => async (dispatch) => {
     }
 };
 
-export const loadFocusArticle = (id) => async (dispatch) => {
+export const loadFocusArticle = (articleId) => async (dispatch) => {
     try {
         dispatch({
             type: ARTICLE_LOADING_START,
         });
-        const res = await axios.get("/api/articles/" + id);
+        const res = await axios.get(`/api/articles/${articleId}`);
         dispatch({
             type: LOAD_FOCUS_ARTICLE_SUCCESS,
             payload: res.data,
@@ -68,10 +68,10 @@ export const clearFocusArticle = () => (dispatch) => {
         type: LOAD_FOCUS_ARTICLE_SUCCESS,
         payload: {},
     });
-}
+};
 
 export const updateArticle = ({
-    ref,
+    articleId,
     language,
     tutor,
     title,
@@ -140,7 +140,7 @@ export const updateArticle = ({
             tocIndentGrowth,
             bodyIndent,
         });
-        const res = await axios.post("/api/articles/" + ref, body, config);
+        const res = await axios.post(`/api/articles/${articleId}/settings`, body, config);
         dispatch(setAlert("论文信息与设置修改成功。", "success"));
         dispatch({
             type: LOAD_FOCUS_ARTICLE_SUCCESS,
@@ -163,18 +163,17 @@ export const updateArticle = ({
     }
 };
 
-export const markArticleStatus = ({ id, status }) => async (dispatch) => {
+export const markArticleStatus = ({ articleId, status }) => async (dispatch) => {
     try {
         dispatch({
             type: ARTICLE_LOADING_START,
         });
         const config = { headers: { "Content-Type": "application/json" } };
-        const body = JSON.stringify({status})
-        const res = await axios.put(`/api/articles/${id}/markstatus`, body, config);
-        dispatch(setAlert(`论文 ${res.data.title} 的状态已成功更改。`, "success"))
+        const body = JSON.stringify({ status });
+        const res = await axios.put(`/api/articles/${articleId}/markstatus`, body, config);
+        dispatch(setAlert(`论文 ${res.data.title} 的状态已成功更改。`, "success"));
         dispatch(loadUserArticles());
     } catch (error) {
-        console.log(error)
         const errors = error.response.data.errors;
         if (errors) {
             errors.forEach((err) => {
@@ -184,6 +183,90 @@ export const markArticleStatus = ({ id, status }) => async (dispatch) => {
         dispatch({
             type: ARTICLE_LOADING_END,
         });
-        // dispatch(setRedirect("/dashboard/articles"));
+    }
+};
+
+export const deleteArticle = ({ articleId }) => async (dispatch) => {
+    try {
+        const c = confirm("您确定要删除这篇论文吗？");
+        if (c) {
+            dispatch({
+                type: ARTICLE_LOADING_START,
+            });
+            await axios.delete(`/api/articles/${articleId}`);
+            dispatch(setAlert("论文删除成功。", "success"));
+            dispatch({
+                type: ARTICLE_LOADING_END,
+            });
+            dispatch(loadUserArticles());
+        }
+    } catch (error) {
+        const errors = error.response.data.errors;
+        if (errors) {
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
+        }
+        dispatch({
+            type: ARTICLE_LOADING_END,
+        });
+    }
+};
+
+export const updateChapter = ({ articleId, chapterId, index, title, content, tailContent }) => async (dispatch) => {
+    try {
+        dispatch({
+            type: ARTICLE_LOADING_START,
+        });
+        const config = { headers: { "Content-Type": "application/json" } };
+        const body = JSON.stringify({
+            index,
+            title,
+            content,
+            tailContent,
+        });
+        await axios.post(`/api/articles/${articleId}/chapters/${chapterId}`, body, config);
+        dispatch(setAlert("章节信息与内容修改成功。", "success"));
+        dispatch(setRedirect(`/dashboard/articles/${articleId}`));
+    } catch (error) {
+        const errors = error.response.data.errors;
+        if (errors) {
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
+        }
+        dispatch({
+            type: ARTICLE_LOADING_END,
+        });
+    }
+};
+
+export const deleteChapter = ({ articleId, chapterId }) => async (dispatch) => {
+    try {
+        const c = confirm("您确定要删除这一章节吗？");
+        if (c) {
+            dispatch({
+                type: ARTICLE_LOADING_START,
+            });
+            const res = await axios.delete(`/api/articles/${articleId}/chapters/${chapterId}`);
+            dispatch(setAlert("章节删除成功。", "success"));
+            dispatch({
+                type: LOAD_FOCUS_ARTICLE_SUCCESS,
+                payload: res.data,
+            });
+            dispatch({
+                type: ARTICLE_LOADING_END,
+            });
+        }
+    } catch (error) {
+        const errors = error.response.data.errors;
+        if (errors) {
+            errors.forEach((err) => {
+                err.location === "banner" ? dispatch(setAlert(err.msg, "danger")) : dispatch(setAlertInForm(err.msg, err.param));
+            });
+        }
+        dispatch({
+            type: ARTICLE_LOADING_END,
+        });
     }
 };

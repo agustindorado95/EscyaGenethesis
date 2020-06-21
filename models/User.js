@@ -2,8 +2,6 @@ const mongoose = require("mongoose");
 
 mongoose.set("useCreateIndex", true);
 
-const Article = require("./Article");
-
 const UserSchema = new mongoose.Schema({
     firstName: {
         type: String,

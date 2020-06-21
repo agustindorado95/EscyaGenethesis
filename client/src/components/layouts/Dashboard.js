@@ -11,6 +11,8 @@ import Readme from "../contents/Readme";
 import Profile from "../contents/Profile";
 import ArticleList from "../contents/ArticleList";
 import ArticleSettings from "../contents/ArticleSettings";
+import ArticleStructure from "../contents/ArticleStructure";
+import ChapterEdit from "../contents/ChapterEdit";
 
 const Dashboard = ({ auth, article, redirect }) => {
 
@@ -27,7 +29,9 @@ const Dashboard = ({ auth, article, redirect }) => {
                         <Route exact path="/dashboard/about" component={About} />
                         <Route exact path="/dashboard/readme" component={Readme} />
                         <Route exact path="/dashboard/profile" component={Profile} />
-                        <Route exact path="/dashboard/articles/:ref" component={ArticleSettings} />
+                        <Route exact path="/dashboard/articles/:articleId/settings" component={ArticleSettings} />
+                        <Route exact path="/dashboard/articles/:articleId/chapters/:chapterId" component={ChapterEdit} />
+                        <Route exact path="/dashboard/articles/:articleId" component={ArticleStructure} />
                         <Route exact path="/dashboard/articles" component={ArticleList} />
                         <Redirect from="/dashboard" to="/dashboard/profile" />
                     </Switch>
