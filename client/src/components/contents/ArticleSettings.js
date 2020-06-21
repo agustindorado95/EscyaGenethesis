@@ -5,20 +5,17 @@ import PropTypes from "prop-types";
 import { inputField, selectField } from "../InputField";
 import { loadFocusArticle, updateArticle } from "../../actions/article";
 import { setSection } from "../../actions/section";
+import locales from "../../utils/locales";
 
 const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle, setSection }) => {
     const [proMode, setProMode] = useState(false);
     const init = {
-        language: "zh",
+        mainLanguage: "zh_Hans",
         tutor: "",
         title: "",
-        titleSecondLanguage: "",
         subTitle: "",
-        subTitleSecondLanguage: "",
         keywords: "",
-        keywordsSecondLanguage: "",
         font: "Times New Roman",
-        fontSecondLanguage: "Times New Roman",
         marginLeft: 2,
         marginRight: 2,
         marginTop: 2,
@@ -55,7 +52,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
         if (Object.keys(focusArticle).length > 0) {
             const newState = formData;
             Object.keys(init).forEach((key) => {
-                newState[key] = focusArticle[key];
+                ["title", "subTitle", "keywords", "font"].includes(key) ? (newState[key] = focusArticle[key][0].value) : (newState[key] = focusArticle[key]);
             });
             setFormData(newState);
         }
@@ -99,7 +96,7 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                 <div className="pl-lg-4">
                                     <div className="row">
                                         <div className="col-lg-12">
-                                            <div className="form-group mb-1">
+                                            <div className="form-group">
                                                 <label className="form-control-label" htmlFor="title">
                                                     论文标题
                                                 </label>
@@ -110,27 +107,11 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
 
                                     <div className="row">
                                         <div className="col-lg-12">
-                                            <div className="form-group mt-1">
-                                                {inputField(formData, setFieldData, alerts, "titleSecondLanguage", "论文第二语言标题（可选）", "text")}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row">
-                                        <div className="col-lg-12">
-                                            <div className="form-group mb-1">
+                                            <div className="form-group">
                                                 <label className="form-control-label" htmlFor="subTitle">
                                                     论文副标题（可选）
                                                 </label>
                                                 {inputField(formData, setFieldData, alerts, "subTitle", "论文副标题（可选）", "text")}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row">
-                                        <div className="col-lg-12">
-                                            <div className="form-group mt-1">
-                                                {inputField(formData, setFieldData, alerts, "subTitleSecondLanguage", "论文第二语言副标题（可选）", "text")}
                                             </div>
                                         </div>
                                     </div>
@@ -146,32 +127,30 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                         </div>
                                         <div className="col-lg-4">
                                             <div className="form-group">
-                                                <label className="form-control-label" htmlFor="language">
+                                                <label className="form-control-label" htmlFor="mainLanguage">
                                                     语言
                                                 </label>
-                                                {selectField(formData, setFieldData, alerts, "language", "语言", [
-                                                    { value: "es", text: "西班牙语" },
-                                                    { value: "zh", text: "中文" },
-                                                ])}
+                                                {selectField(
+                                                    formData,
+                                                    setFieldData,
+                                                    alerts,
+                                                    "mainLanguage",
+                                                    "语言",
+                                                    ["zh_Hans", "es_ES", "en_US", "zh_Hant"].map((l) => {
+                                                        return { value: l, text: locales[l] };
+                                                    })
+                                                )}
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="row">
-                                        <div className="col-lg-6">
+                                        <div className="col">
                                             <div className="form-group">
                                                 <label className="form-control-label" htmlFor="keywords">
                                                     关键词
                                                 </label>
                                                 {inputField(formData, setFieldData, alerts, "keywords", "关键词1，关键词2，关键词3……", "text")}
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-6">
-                                            <div className="form-group">
-                                                <label className="form-control-label" htmlFor="keywordsSecondLanguage">
-                                                    第二语言关键词（可选）
-                                                </label>
-                                                {inputField(formData, setFieldData, alerts, "keywordsSecondLanguage", "关键词1，关键词2，关键词3……", "text")}
                                             </div>
                                         </div>
                                     </div>
@@ -203,24 +182,20 @@ const ArticleSettings = ({ alerts, focusArticle, loadFocusArticle, updateArticle
                                     <h6 className="heading-small text-muted mb-4">字体与字号设置</h6>
                                     <div className="pl-lg-4">
                                         <div className="row">
-                                            {[
-                                                { label: "字体", fieldName: "font" },
-                                                { label: "第二语言字体", fieldName: "fontSecondLanguage" },
-                                            ].map((obj) => (
-                                                <div className="col-md-3" key={obj.fieldName}>
-                                                    <div className="form-group">
-                                                        <label className="form-control-label" htmlFor={obj.fieldName}>
-                                                            {obj.label}
-                                                        </label>
-                                                        {selectField(formData, setFieldData, alerts, obj.fieldName, "字体", [
-                                                            { value: "Times New Roman", text: "Times New Roman" },
-                                                            { value: "Helvetica", text: "Helvetica" },
-                                                            { value: "SongTi", text: "宋体" },
-                                                            { value: "HeiTi", text: "黑体" },
-                                                        ])}
-                                                    </div>
+                                            <div className="col-md-3">
+                                                <div className="form-group">
+                                                    <label className="form-control-label" htmlFor="font">
+                                                        字体
+                                                    </label>
+                                                    {selectField(formData, setFieldData, alerts, "font", "字体", [
+                                                        { value: "Times New Roman", text: "Times New Roman" },
+                                                        { value: "Helvetica", text: "Helvetica" },
+                                                        { value: "SongTi", text: "宋体" },
+                                                        { value: "HeiTi", text: "黑体" },
+                                                    ])}
                                                 </div>
-                                            ))}
+                                            </div>
+
                                             {[
                                                 { label: "章节标题字号", fieldName: "headingFontSize" },
                                                 { label: "正文字号", fieldName: "bodyFontSize" },

@@ -72,16 +72,12 @@ export const clearFocusArticle = () => (dispatch) => {
 
 export const updateArticle = ({
     articleId,
-    language,
+    mainLanguage,
     tutor,
     title,
-    titleSecondLanguage,
     subTitle,
-    subTitleSecondLanguage,
     keywords,
-    keywordsSecondLanguage,
     font,
-    fontSecondLanguage,
     marginLeft,
     marginRight,
     marginTop,
@@ -102,6 +98,9 @@ export const updateArticle = ({
     bodyAfterSpacing,
     tocIndentGrowth,
     bodyIndent,
+    abstract,
+    bibliography,
+    gratitude
 }) => async (dispatch) => {
     try {
         dispatch({
@@ -109,16 +108,12 @@ export const updateArticle = ({
         });
         const config = { headers: { "Content-Type": "application/json" } };
         const body = JSON.stringify({
-            language,
+            mainLanguage,
             tutor,
             title,
-            titleSecondLanguage,
             subTitle,
-            subTitleSecondLanguage,
             keywords,
-            keywordsSecondLanguage,
             font,
-            fontSecondLanguage,
             marginLeft,
             marginRight,
             marginTop,
@@ -139,8 +134,11 @@ export const updateArticle = ({
             bodyAfterSpacing,
             tocIndentGrowth,
             bodyIndent,
+            abstract,
+            bibliography,
+            gratitude
         });
-        const res = await axios.post(`/api/articles/${articleId}/settings`, body, config);
+        const res = await axios.post(`/api/articles/${articleId}`, body, config);
         dispatch(setAlert("论文信息与设置修改成功。", "success"));
         dispatch({
             type: LOAD_FOCUS_ARTICLE_SUCCESS,
@@ -171,7 +169,7 @@ export const markArticleStatus = ({ articleId, status }) => async (dispatch) => 
         const config = { headers: { "Content-Type": "application/json" } };
         const body = JSON.stringify({ status });
         const res = await axios.put(`/api/articles/${articleId}/markstatus`, body, config);
-        dispatch(setAlert(`论文 ${res.data.title} 的状态已成功更改。`, "success"));
+        dispatch(setAlert(`论文 ${res.data.title[0].value} 的状态已成功更改。`, "success"));
         dispatch(loadUserArticles());
     } catch (error) {
         const errors = error.response.data.errors;

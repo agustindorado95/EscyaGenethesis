@@ -8,29 +8,31 @@ import { loadFocusArticle, updateChapter } from "../../actions/article";
 import { inputField, textAreaField } from "../InputField";
 import { sideStructurePreview } from "../SideStructurePreview";
 
-const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, focusArticle, loadFocusArticle, updateChapter }) => {
-    const { articleId, chapterId } = useParams();
+const ArticleContentEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, focusArticle, loadFocusArticle, updateChapter }) => {
+    const { articleId, section } = useParams();
 
-    const [chapterContent, setChapterContent] = useState({ index: "", title: "", content: "", tailContent: "" });
+    const [content, setContent] = useState({ content: "", contentSecondLanguage: ""});
 
     const setFieldData = (e) => {
         clearAlert();
-        setChapterContent({
-            ...chapterContent,
+        setContent({
+            ...content,
             [e.target.name]: e.target.value,
         });
     };
 
-    const submitChapter = (e) => {
+    const submitContent = (e) => {
         e.preventDefault();
         clearAlert();
-        updateChapter({ ...chapterContent, articleId, chapterId });
+        updateArticleContent({ ...chapterContent, articleId, chapterId });
     };
+
     useEffect(() => {
         setSection("我的论文");
         clearAlert();
         loadFocusArticle(articleId);
     }, []);
+
     useEffect(() => {
         if (chapterId !== "new" && Object.keys(focusArticle).length > 0) {
             const chapter = focusArticle.chapters.filter((c) => c._id === chapterId)[0];
@@ -131,7 +133,7 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
     }
 };
 
-ChapterEdit.propTypes = {
+ArticleContentEdit.propTypes = {
     setSection: PropTypes.func.isRequired,
     setAlert: PropTypes.func.isRequired,
     clearAlert: PropTypes.func.isRequired,
@@ -144,4 +146,4 @@ const mapStateToProps = (state) => ({
     alerts: state.alert,
     focusArticle: state.article.focusArticle,
 });
-export default connect(mapStateToProps, { setSection, setAlert, clearAlert, setRedirect, loadFocusArticle, updateChapter })(ChapterEdit);
+export default connect(mapStateToProps, { setSection, setAlert, clearAlert, setRedirect, loadFocusArticle, updateChapter })(ArticleContentEdit);

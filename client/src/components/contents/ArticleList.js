@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { setSection } from "../../actions/section";
 import { loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle } from "../../actions/article";
+import locales from "../../utils/locales";
 
 const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle }) => {
     useEffect(() => {
@@ -39,6 +40,7 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                     <th scope="col">状态</th>
                                     <th scope="col">语言</th>
                                     <th scope="col">导师</th>
+                                    <th scope="col">关键词</th>
                                     <th scope="col">最后修改</th>
                                     <th scope="col">操作</th>
                                 </tr>
@@ -49,10 +51,10 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                         <th scope="row">
                                             <div className="media align-items-center">
                                                 <div className="media-body">
-                                                    {article.status === "finalized" && <span className="mb-0 text-sm text-dark">{article.title}</span>}
+                                                    {article.status === "finalized" && <span className="mb-0 text-sm text-dark">{article.title[0].value}</span>}
                                                     {article.status === "progress" && (
                                                         <Link to={`/dashboard/articles/${article._id}`} className="text-dark">
-                                                            <span className="mb-0 text-sm">{article.title}</span>
+                                                            <span className="mb-0 text-sm">{article.title[0].value}</span>
                                                         </Link>
                                                     )}
                                                 </div>
@@ -72,11 +74,9 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                                 )}
                                             </span>
                                         </td>
-                                        <td>
-                                            {article.language === "es" && "西班牙语"}
-                                            {article.language === "zh" && "中文"}
-                                        </td>
+                                        <td>{locales[article.mainLanguage]}</td>
                                         <td>{article.tutor}</td>
+                                        <td>{article.keywords[0].value}</td>
                                         <td>
                                             {new Date(article.timeEdited).toLocaleDateString("zh-CN", {
                                                 year: "numeric",

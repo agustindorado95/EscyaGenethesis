@@ -15,7 +15,7 @@ const loginCheck = [
 ];
 
 const articleCheck = [
-    check("language", "请选择语言。").exists(),
+    check("mainLanguage", "请选择论文主要语言。").exists(),
     check("title", "请填写论文标题。").isLength({min:1})
 ];
 

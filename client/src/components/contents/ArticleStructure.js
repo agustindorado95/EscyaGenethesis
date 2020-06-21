@@ -84,16 +84,16 @@ const ArticleStructure = ({ setSection, focusArticle, loadFocusArticle, deleteCh
                             <div className="card-header border-0">
                                 <div className="row">
                                     <div className="col-12">
-                                        <h3 className="mb-2">{focusArticle.title}</h3>
-                                        <small className="text-muted pl-1">论文框架目录</small>
+                                        <h3 className="mb-2">{focusArticle.title[0].value}</h3>
+                                        <h5 className="mb-2">{focusArticle.subTitle[0].value && focusArticle.subTitle[0].value}</h5>
                                     </div>
                                 </div>
                                 <hr className="mt-3 mb-0" />
                             </div>
                             <div className="card-body pt-2">
                                 {generateArticleContentRow("abstract", "摘要")}
-                                {generateArticleContentRow("introduction", "引入", focusArticle.introduction.title)}
                                 {focusArticle.chapters.map((chapter) => generateChapterRow(chapter))}
+                                {generateArticleContentRow("bibliography", "参考文献")}
                                 {generateArticleContentRow("gratitude", "致谢辞")}
                             </div>
                             <div className="card-footer py-4">

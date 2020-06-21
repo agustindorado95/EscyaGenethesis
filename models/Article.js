@@ -8,59 +8,42 @@ const ArticleSchema = new mongoose.Schema({
         ref: "users",
         required: true,
     },
-    language: {
+    mainLanguage: {
         type: String,
         required: true,
     },
     tutor: {
         type: String,
+        default: ''
     },
     status: {
         type: String,
         default: "progress",
     },
     title: {
-        type: String,
+        type: Array,
         required: true,
     },
-    titleSecondLanguage: {
-        type: String,
-    },
     subTitle: {
-        type: String,
-    },
-    subTitleSecondLanguage: {
-        type: String,
+        type: Array,
     },
     abstract: {
-        type: String,
-    },
-    abstractSecondLanguage: {
-        type: String,
-    },
-    introduction: {
-        type: Object,
-        default: { title: "", content: "" },
+        type: Array,
     },
     keywords: {
-        type: String,
-    },
-    keywordsSecondLanguage: {
-        type: String,
+        type: Array,
     },
     bibliography: {
         type: String,
+        default: ''
     },
     gratitude: {
         type: String,
+        default: ''
     },
     font: {
-        type: String,
-        default: "Times New Roman",
-    },
-    fontSecondLanguage: {
-        type: String,
-        default: "Times New Roman",
+        type: Array,
+        default: [{ language: "zh", value: "Times New Roman" }],
     },
     marginLeft: {
         type: Number,
