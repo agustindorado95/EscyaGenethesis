@@ -18,22 +18,20 @@ const ArticleStructure = ({ setSection, focusArticle, loadFocusArticle, deleteCh
         <Fragment key={uuidv4()}>
             <div className="input-group-sm input-group mb-3 input-group-border-bottom-only">
                 <div className="input-group-prepend">
-                    <span className="input-group-text">{name}</span>
+                    <span className="input-group-text text-dark-gray">{name}</span>
                 </div>
                 <div type="text" className="form-control form-control-sm">
                     {title}
                 </div>
                 <div className="input-group-append">
-                    <span
+                    <Link
                         className="input-group-text cursor-pointer text-hover-primary"
-                        onClick={() => {
-                            console.log(section);
-                        }}
+                        to={`/dashboard/articles/${articleId}/sections/${section}`}
                         data-toggle="tooltip"
                         title="编辑内容"
                     >
                         <i className="far fa-edit"></i>
-                    </span>
+                    </Link>
                 </div>
             </div>
         </Fragment>
@@ -45,11 +43,14 @@ const ArticleStructure = ({ setSection, focusArticle, loadFocusArticle, deleteCh
                 {[...Array(chapter.index.split(".").length - 1).keys()].map(() => (
                     <div className="pr-5" key={uuidv4()}></div>
                 ))}
-                <div className="input-group-prepend">
-                    <span className="input-group-text">第{chapter.index}章</span>
-                </div>
+                {!chapter.hideIndex && (
+                    <div className="input-group-prepend">
+                        <span className="input-group-text text-dark-gray">章节{chapter.index}:</span>
+                    </div>
+                )}
                 <div type="text" className="form-control form-control-sm">
-                    {chapter.title}
+                <span className="text-dark-gray">{chapter.title}</span>
+                    
                 </div>
                 <div className="input-group-append">
                     <Link
@@ -63,7 +64,7 @@ const ArticleStructure = ({ setSection, focusArticle, loadFocusArticle, deleteCh
                     <span
                         className="input-group-text cursor-pointer text-hover-danger"
                         onClick={() => {
-                            deleteChapter({articleId:articleId, chapterId:chapter._id});
+                            deleteChapter({ articleId: articleId, chapterId: chapter._id });
                         }}
                         data-toggle="tooltip"
                         title="删除章节"
@@ -98,11 +99,14 @@ const ArticleStructure = ({ setSection, focusArticle, loadFocusArticle, deleteCh
                             </div>
                             <div className="card-footer py-4">
                                 <div className="text-right">
-                                    <Link to="/dashboard/articles" className="btn btn-secondary">
-                                        返回
+                                    <Link to="/dashboard/articles" className="btn btn-secondary ml-3">
+                                    <i className="far fa-undo-alt pr-2"></i>返回
                                     </Link>
-                                    <Link to={`/dashboard/articles/${focusArticle._id}/chapters/new`} className="btn btn-primary">
-                                        新建章节
+                                    <Link to={`/dashboard/articles/${focusArticle._id}/settings`} className="btn btn-primary ml-3">
+                                    <i className="far fa-cogs pr-2"></i>修改设置
+                                    </Link>
+                                    <Link to={`/dashboard/articles/${focusArticle._id}/chapters/new`} className="btn btn-primary ml-3">
+                                    <i className="far fa-file pr-2"></i>新建章节
                                     </Link>
                                 </div>
                             </div>

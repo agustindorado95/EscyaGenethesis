@@ -139,7 +139,8 @@ export const updateArticle = ({
             gratitude
         });
         const res = await axios.post(`/api/articles/${articleId}`, body, config);
-        dispatch(setAlert("论文信息与设置修改成功。", "success"));
+        articleId = res.data._id
+        dispatch(setAlert(`论文 ${res.data.title[0].value} 修改成功。`, "success"));
         dispatch({
             type: LOAD_FOCUS_ARTICLE_SUCCESS,
             payload: res.data,
@@ -147,7 +148,7 @@ export const updateArticle = ({
         dispatch({
             type: ARTICLE_LOADING_END,
         });
-        dispatch(setRedirect("/dashboard/articles"));
+        dispatch(setRedirect(`/dashboard/articles/${articleId}`));
     } catch (error) {
         const errors = error.response.data.errors;
         if (errors) {
@@ -211,7 +212,7 @@ export const deleteArticle = ({ articleId }) => async (dispatch) => {
     }
 };
 
-export const updateChapter = ({ articleId, chapterId, index, title, content, tailContent }) => async (dispatch) => {
+export const updateChapter = ({ articleId, chapterId, index, title, hideIndex, content, tailContent }) => async (dispatch) => {
     try {
         dispatch({
             type: ARTICLE_LOADING_START,
@@ -220,12 +221,16 @@ export const updateChapter = ({ articleId, chapterId, index, title, content, tai
         const body = JSON.stringify({
             index,
             title,
+            hideIndex,
             content,
             tailContent,
         });
         await axios.post(`/api/articles/${articleId}/chapters/${chapterId}`, body, config);
         dispatch(setAlert("章节信息与内容修改成功。", "success"));
         dispatch(setRedirect(`/dashboard/articles/${articleId}`));
+        dispatch({
+            type: ARTICLE_LOADING_END,
+        });
     } catch (error) {
         const errors = error.response.data.errors;
         if (errors) {

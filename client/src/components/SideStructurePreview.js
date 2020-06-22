@@ -14,7 +14,7 @@ export const sideStructurePreview = (article) => {
                             {article.chapters.map((c) => (
                                 <Fragment key={c._id}>
                                     <p id={c._id} className="text-sm text-muted" style={{ marginLeft: `${(c.index.split(".").length - 1) * 2}rem` }}>
-                                        第{c.index}章：{c.title}
+                                        {c.hideIndex ? c.title : `章节${c.index}: ${c.title}`}
                                     </p>
                                 </Fragment>
                             ))}

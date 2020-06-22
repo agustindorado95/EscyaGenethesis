@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
-const { articleCheck, articleSettingsCheck } = require("../../middleware/validators");
 const { sortByObjectIndex } = require("../../middleware/utils");
 const userRequired = require("../../middleware/tokenVarifier");
 
@@ -126,10 +125,10 @@ router.put("/:articleId/markstatus", userRequired, async (req, res) => {
     }
 });
 
-// @路径    POST api/articles/:articleId/settings
-// @功能    更新ID为articleId的论文设置信息，或创建新论文条目
+// @路径    POST api/articles/:articleId
+// @功能    更新ID为articleId的论文信息，或创建新论文条目
 // @权限    论文所属用户或管理员
-router.post("/:articleId", [userRequired, articleCheck], async (req, res) => {
+router.post("/:articleId", [userRequired], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -208,7 +207,7 @@ router.post("/:articleId", [userRequired, articleCheck], async (req, res) => {
                 "gratitude",
             ].map((item) => {
                 if (req.body[item] !== undefined) {
-                    article[item] = req.body[item]
+                    article[item] = req.body[item];
                 }
             });
             ["title", "subTitle", "keywords", "font", "abstract"].map((item) => {
@@ -407,6 +406,7 @@ router.post("/:articleId/chapters/:chapterId", userRequired, async (req, res) =>
             }
             chapter.index = req.body.index;
             chapter.title = req.body.title;
+            chapter.hideIndex = req.body.hideIndex;
             chapter.content = req.body.content;
             chapter.tailContent = req.body.tailContent;
             chapter.timeEdited = Date.now();

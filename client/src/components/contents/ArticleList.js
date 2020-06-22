@@ -1,21 +1,30 @@
 import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { setSection } from "../../actions/section";
 import { loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle } from "../../actions/article";
 import locales from "../../utils/locales";
+import {queryArticleList} from '../../utils/query'
 
-const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle }) => {
+const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArticle, markArticleStatus, deleteArticle, history }) => {
     useEffect(() => {
         setSection("我的论文");
         clearFocusArticle();
         loadUserArticles();
     }, []);
 
+    const query = useLocation().search.slice(1)
+    let articles = userArticles
+    if (query) {
+        articles = queryArticleList(articles, query)
+    }
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(5);
 
+    const toArticlePage = (articleId) => {
+        history.push(`/dashboard/articles/${articleId}`);
+    };
     return (
         <div className="row">
             <div className="col">
@@ -23,7 +32,7 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                     <div className="card-header border-0">
                         <div className="row">
                             <div className="col-8">
-                                <h3 className="mb-0">我的所有论文 ({userArticles.length})</h3>
+                                <h3 className="mb-0">论文列表 ({articles.length})</h3>
                             </div>
                             <div className="col-4 text-right">
                                 <Link to="/dashboard/articles/new/settings" className="btn btn-primary btn-sm">
@@ -46,57 +55,60 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                 </tr>
                             </thead>
                             <tbody>
-                                {userArticles.slice((page - 1) * perPage, (page - 1) * perPage + perPage).map((article) => (
-                                    <tr key={article._id}>
-                                        <th scope="row">
+                                {articles.slice((page - 1) * perPage, (page - 1) * perPage + perPage).map((article) => (
+                                    <tr key={article._id} className="bg-hover-dark">
+                                        <th scope="row" onClick={() => toArticlePage(article._id)} className="cursor-pointer">
                                             <div className="media align-items-center">
                                                 <div className="media-body">
-                                                    {article.status === "finalized" && <span className="mb-0 text-sm text-dark">{article.title[0].value}</span>}
-                                                    {article.status === "progress" && (
-                                                        <Link to={`/dashboard/articles/${article._id}`} className="text-dark">
-                                                            <span className="mb-0 text-sm">{article.title[0].value}</span>
-                                                        </Link>
-                                                    )}
+                                                    <span className="mb-0 text-sm text-dark text-color-trasition">{article.title[0].value}</span>
                                                 </div>
                                             </div>
                                         </th>
-                                        <td>
+                                        <td onClick={() => toArticlePage(article._id)} className="cursor-pointer">
                                             <span className="badge badge-dot mr-4">
                                                 {article.status === "finalized" && (
                                                     <Fragment>
-                                                        <i className="bg-success"></i> 已完成
+                                                        <i className="bg-success"></i> <span className="text-color-trasition">已完成</span>
                                                     </Fragment>
                                                 )}
                                                 {article.status === "progress" && (
                                                     <Fragment>
-                                                        <i className="bg-danger"></i> 未完成
+                                                        <i className="bg-danger"></i> <span className="text-color-trasition">未完成</span>
                                                     </Fragment>
                                                 )}
                                             </span>
                                         </td>
-                                        <td>{locales[article.mainLanguage]}</td>
-                                        <td>{article.tutor}</td>
-                                        <td>{article.keywords[0].value}</td>
-                                        <td>
-                                            {new Date(article.timeEdited).toLocaleDateString("zh-CN", {
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
-                                                hour: "numeric",
-                                                minute: "numeric",
-                                            })}
+                                        <td onClick={() => toArticlePage(article._id)} className="cursor-pointer">
+                                            <span className="text-color-trasition">{locales[article.mainLanguage]}</span>
+                                        </td>
+                                        <td onClick={() => toArticlePage(article._id)} className="cursor-pointer">
+                                            <span className="text-color-trasition">{article.tutor}</span>
+                                        </td>
+                                        <td onClick={() => toArticlePage(article._id)} className="cursor-pointer">
+                                            <span className="text-color-trasition">{article.keywords[0].value}</span>
+                                        </td>
+                                        <td onClick={() => toArticlePage(article._id)} className="cursor-pointer">
+                                            <span className="text-color-trasition">
+                                                {new Date(article.timeEdited).toLocaleDateString("zh-CN", {
+                                                    year: "numeric",
+                                                    month: "long",
+                                                    day: "numeric",
+                                                    hour: "numeric",
+                                                    minute: "numeric",
+                                                })}
+                                            </span>
                                         </td>
                                         <td>
+                                            <button
+                                                className="btn-none articles-action delete pr-2 pl-0"
+                                                onClick={() => {
+                                                    deleteArticle({ articleId: article._id });
+                                                }}
+                                            >
+                                                <i className="fas fa-trash-alt text-danger"></i>
+                                            </button>
                                             {article.status === "finalized" && (
                                                 <Fragment>
-                                                    <button
-                                                        className="btn-none articles-action delete pr-2 pl-0"
-                                                        onClick={() => {
-                                                            deleteArticle({ articleId: article._id });
-                                                        }}
-                                                    >
-                                                        <i className="fas fa-trash-alt text-danger"></i>
-                                                    </button>
                                                     <span
                                                         onClick={() => {
                                                             markArticleStatus({ articleId: article._id, status: "progress" });
@@ -124,11 +136,8 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                                     >
                                                         <i className="fas fa-check-circle text-success"></i>
                                                     </span>
-                                                    <Link to={`/dashboard/articles/${article._id}/settings`} className="pr-2">
-                                                        <i className="fas fa-cog text-primary"></i>
-                                                    </Link>
-                                                    <Link to={`/dashboard/articles/${article._id}`} className="pr-2">
-                                                        <i className="fas fa-pen-nib text-primary"></i>
+                                                    <Link to={`/dashboard/articles/${article._id}/languages`} className="pr-2">
+                                                        <i className="fas fa-language text-primary"></i>
                                                     </Link>
                                                 </Fragment>
                                             )}
@@ -160,7 +169,7 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                 </div>
                                 <div className="col">
                                     <ul className="pagination justify-content-end mb-0">
-                                        <li className="page-item">
+                                        <li className={page > 1 ? "page-item" : "page-item disabled"}>
                                             <span
                                                 className="page-link"
                                                 onClick={() => {
@@ -185,7 +194,7 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                         <li className="page-item active">
                                             <span className="page-link">{page}</span>
                                         </li>
-                                        <li className={page < Math.ceil(userArticles.length / perPage) ? "page-item" : "page-item disabled"}>
+                                        <li className={page < Math.ceil(articles.length / perPage) ? "page-item" : "page-item disabled"}>
                                             <span
                                                 className="page-link"
                                                 onClick={() => {
@@ -196,11 +205,11 @@ const ArticleList = ({ userArticles, setSection, loadUserArticles, clearFocusArt
                                                 <span className="sr-only">Next</span>
                                             </span>
                                         </li>
-                                        <li className="page-item">
+                                        <li className={page < Math.ceil(articles.length / perPage) ? "page-item" : "page-item disabled"}>
                                             <span
                                                 className="page-link"
                                                 onClick={() => {
-                                                    setPage(Math.ceil(userArticles.length / perPage));
+                                                    setPage(Math.ceil(articles.length / perPage));
                                                 }}
                                             >
                                                 <i className="fas fa-angle-double-right"></i>

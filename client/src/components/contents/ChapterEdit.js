@@ -11,14 +11,19 @@ import { sideStructurePreview } from "../SideStructurePreview";
 const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, focusArticle, loadFocusArticle, updateChapter }) => {
     const { articleId, chapterId } = useParams();
 
-    const [chapterContent, setChapterContent] = useState({ index: "", title: "", content: "", tailContent: "" });
+    const [chapterContent, setChapterContent] = useState({ index: "", title: "", hideIndex: false, content: "", tailContent: "" });
 
     const setFieldData = (e) => {
-        clearAlert();
-        setChapterContent({
-            ...chapterContent,
-            [e.target.name]: e.target.value,
-        });
+        alerts.length > 0 && clearAlert();
+        e.target.type === "checkbox"
+            ? setChapterContent({
+                  ...chapterContent,
+                  [e.target.name]: e.target.checked,
+              })
+            : setChapterContent({
+                  ...chapterContent,
+                  [e.target.name]: e.target.value,
+              });
     };
 
     const submitChapter = (e) => {
@@ -37,6 +42,7 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
             if (chapter) {
                 setChapterContent({
                     index: chapter.index,
+                    hideIndex: chapter.hideIndex,
                     title: chapter.title,
                     content: chapter.content,
                     tailContent: chapter.tailContent,
@@ -69,7 +75,7 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
                                     <h6 className="heading-small text-muted mb-4">章节基本信息</h6>
                                     <div className="pl-lg-4">
                                         <div className="row">
-                                            <div className="col-sm-2">
+                                            <div className="col-sm-3">
                                                 <div className="form-group">
                                                     <label className="form-control-label" htmlFor="input-index">
                                                         章节序号
@@ -77,7 +83,7 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
                                                     {inputField(chapterContent, setFieldData, alerts, "index", "a.b.c", "text", { required: true })}
                                                 </div>
                                             </div>
-                                            <div className="col-sm-10">
+                                            <div className="col-sm-9">
                                                 <div className="form-group">
                                                     <label className="form-control-label" htmlFor="input-title">
                                                         章节标题
@@ -85,6 +91,19 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
                                                     {inputField(chapterContent, setFieldData, alerts, "title", "章节标题", "text", { required: true })}
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div className="custom-control custom-control-alternative custom-checkbox">
+                                            <input
+                                                type="checkbox"
+                                                className="custom-control-input"
+                                                id="hideIndex"
+                                                name="hideIndex"
+                                                checked={chapterContent.hideIndex}
+                                                onChange={setFieldData}
+                                            />
+                                            <label className="custom-control-label text-muted" htmlFor="hideIndex">
+                                                隐藏章节序号
+                                            </label>
                                         </div>
                                     </div>
                                     <hr className="my-4" />
@@ -112,11 +131,11 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
                                         </div>
                                     </div>
                                     <div className="text-right">
-                                        <Link to={`/dashboard/articles/${articleId}`} className="btn btn-secondary btn-lg">
-                                            返回
+                                        <Link to={`/dashboard/articles/${articleId}`} className="btn btn-secondary btn-lg ml-3">
+                                        <i className="far fa-undo-alt pr-2"></i>返回
                                         </Link>
-                                        <button type="submit" className="btn btn-primary btn-lg">
-                                            {chapterId === "new" ? "新建章节" : "修改章节"}
+                                        <button type="submit" className="btn btn-success btn-lg ml-3">
+                                        <i className="far fa-check pr-2"></i>{chapterId === "new" ? "新建章节" : "修改章节"}
                                         </button>
                                     </div>
                                 </form>

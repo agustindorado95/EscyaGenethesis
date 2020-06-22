@@ -14,7 +14,7 @@ const ArticleSchema = new mongoose.Schema({
     },
     tutor: {
         type: String,
-        default: ''
+        default: "",
     },
     status: {
         type: String,
@@ -35,11 +35,11 @@ const ArticleSchema = new mongoose.Schema({
     },
     bibliography: {
         type: String,
-        default: ''
+        default: "",
     },
     gratitude: {
         type: String,
-        default: ''
+        default: "",
     },
     font: {
         type: Array,
@@ -139,6 +139,10 @@ const ArticleSchema = new mongoose.Schema({
                 type: String,
                 require: true,
                 // '1' / '2.3' / '3.1.4'
+            },
+            hideIndex: {
+                type: Boolean,
+                default: false,
             },
             title: {
                 type: String,

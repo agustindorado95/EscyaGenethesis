@@ -13,6 +13,7 @@ import ArticleList from "../contents/ArticleList";
 import ArticleSettings from "../contents/ArticleSettings";
 import ArticleStructure from "../contents/ArticleStructure";
 import ChapterEdit from "../contents/ChapterEdit";
+import ArticleSectionEdit from "../contents/ArticleSectionEdit";
 
 const Dashboard = ({ auth, article, redirect }) => {
 
@@ -21,7 +22,7 @@ const Dashboard = ({ auth, article, redirect }) => {
             <LeftNav />
             <div className="main-content">
                 <div className="calc-height-before-footer">
-                <TopNav />
+                <Route path='/' component={TopNav} />
                 <div className="container-fluid mt--7">
                     {auth.loading || article.loading ? <Loader /> : null}
                     {redirect && <Redirect to={redirect} />}
@@ -31,6 +32,7 @@ const Dashboard = ({ auth, article, redirect }) => {
                         <Route exact path="/dashboard/profile" component={Profile} />
                         <Route exact path="/dashboard/articles/:articleId/settings" component={ArticleSettings} />
                         <Route exact path="/dashboard/articles/:articleId/chapters/:chapterId" component={ChapterEdit} />
+                        <Route exact path="/dashboard/articles/:articleId/sections/:section" component={ArticleSectionEdit} />
                         <Route exact path="/dashboard/articles/:articleId" component={ArticleStructure} />
                         <Route exact path="/dashboard/articles" component={ArticleList} />
                         <Redirect from="/dashboard" to="/dashboard/profile" />

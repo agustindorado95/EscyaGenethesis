@@ -14,11 +14,6 @@ const loginCheck = [
     check("password", "Password is required").exists(),
 ];
 
-const articleCheck = [
-    check("mainLanguage", "请选择论文主要语言。").exists(),
-    check("title", "请填写论文标题。").isLength({min:1})
-];
-
 const articleSettingsCheck = [
     check("font", "Font is required.").exists(),
     check("fontSecondLanguage", "Second Language Font is required.").exists(),
@@ -62,7 +57,6 @@ const passwordChangeCheck = [
 module.exports = {
     registerCheck,
     loginCheck,
-    articleCheck,
     articleSettingsCheck,
     userProfileCheck,
     passwordChangeCheck
