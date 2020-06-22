@@ -25,9 +25,9 @@ const LeftNav = ({ logout, currentSection }) => {
                 >
                     <span className="navbar-toggler-icon"></span>
                 </button>
-                <a className="navbar-brand pt-0" href="/">
+                <Link className="navbar-brand pt-3" to="/">
                     <img src={process.env.PUBLIC_URL + "/img/brand/blue.png"} className="navbar-brand-img" alt="..." />
-                </a>
+                </Link>
                 <div className="text-center d-none d-md-block">
                     <span className="badge badge-danger alpha">Dev 0.0.1</span>
                 </div>

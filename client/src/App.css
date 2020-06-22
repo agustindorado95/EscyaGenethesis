@@ -62,7 +62,7 @@ body {
 
 .header {
     min-height: 200px;
-    background-image: url("images/banner_background.jpg");
+    background-image: url("../public/img/banner/banner_background.jpg");
     background-size: cover;
     background-position: center top;
 }
