@@ -117,7 +117,6 @@ body {
     background: #2e2e2e !important;
 }
 
-
 .text-hover-primary:hover {
     color: #0275d8;
 }
@@ -130,14 +129,15 @@ body {
 .text-hover-warning:hover {
     color: #f0ad4e;
 }
-.bg-hover-dark, .bg-hover-dark .text-color-trasition {
+.bg-hover-dark,
+.bg-hover-dark .text-color-trasition {
     transition: all, 0.3s;
 }
 .bg-hover-dark:hover {
     background-color: #000000be;
 }
 .bg-hover-dark:hover .text-color-trasition {
-    color: #fff !important
+    color: #fff !important;
 }
 
 .font-weight-normal {

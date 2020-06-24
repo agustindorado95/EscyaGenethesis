@@ -148,7 +148,7 @@ const ArticleSchema = new mongoose.Schema({
                 type: String,
             },
             content: {
-                type: String,
+                type: Object,
             },
             tailContent: {
                 type: String,
