@@ -10,29 +10,33 @@ import { sideStructurePreview } from "../SideStructurePreview";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState } from "draft-js";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { convertToRaw, convertFromRaw, Modifier, CompositeDecorator } from "draft-js";
+import { convertToRaw, convertFromRaw, Modifier } from "draft-js";
 
-class CustomOption extends Component {
+class Footnote extends Component {
     static propTypes = {
-        footnoteKey: PropTypes.string,
         onChange: PropTypes.func,
         editorState: PropTypes.object,
     };
 
     addFootnote = (text) => {
-        const { editorState, onChange, footnoteKey } = this.props;
-        const contentState = Modifier.applyEntity(editorState.getCurrentContent(), editorState.getSelection(), footnoteKey);
-        onChange(EditorState.push(editorState, contentState, "apply-entity"));
+        const { editorState, onChange } = this.props;
+        const footnote = ' (footnote: ' + text + ')'
+        const contentState = Modifier.replaceText(
+            editorState.getCurrentContent(),
+            editorState.getSelection(),
+            footnote
+        );
+        onChange(EditorState.push(editorState, contentState, 'insert-characters'));
     };
 
     render() {
         return (
             <Fragment>
-                <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal fade" id="footnoteModal" tabIndex="-1" role="dialog" aria-labelledby="footnoteModalLabel" aria-hidden="true">
                     <div className="modal-dialog modal-dialog-centered">
                         <div className="modal-content">
                             <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">
+                                <h5 className="modal-title" id="footnoteModalLabel">
                                     脚注生成
                                 </h5>
                                 <button type="button" className="close" data-dismiss="modal" aria-label="Close">
@@ -40,7 +44,7 @@ class CustomOption extends Component {
                                 </button>
                             </div>
                             <div className="modal-body">
-                                <input id="footnote-generator-comment" className="form-control form-control-alternative" placeholder="comment" type="text" />
+                                <input id="footnote-generator-comment" className="form-control form-control-alternative" placeholder="脚注内容" type="text" />
                             </div>
                             <div className="modal-footer">
                                 <button type="button" className="btn btn-secondary" data-dismiss="modal">
@@ -60,28 +64,12 @@ class CustomOption extends Component {
                         </div>
                     </div>
                 </div>
-                <div onClick={this.addFootnote}>
+                <div data-toggle="modal" data-target="#footnoteModal">
                     <i className="pl-2 far fa-pen-nib"></i>
                 </div>
             </Fragment>
         );
     }
-}
-
-const FootnoteSpan = (props) => {
-    console.log(props);
-    return (
-        <span {...props} style={{ color: "red" }}>
-            1
-        </span>
-    );
-};
-function findFootnoteEntities(contentBlock, callback, contentState) {
-    contentBlock.findEntityRanges((character) => {
-        const entityKey = character.getEntity();
-        entityKey && console.log(contentState.getEntity(entityKey).getType());
-        return entityKey !== null && contentState.getEntity(entityKey).getType() === "FOOTNOTE";
-    }, callback);
 }
 
 const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, focusArticle, loadFocusArticle, updateChapter }) => {
@@ -91,8 +79,6 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
 
     const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
-    const [footnoteKey, setFootnoteKey] = useState(null);
-
     const onChange = (v) => {
         setEditorState(v);
     };
@@ -101,13 +87,13 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
         alerts.length > 0 && clearAlert();
         e.target.type === "checkbox"
             ? setChapterInfo({
-                  ...chapterInfo,
-                  [e.target.name]: e.target.checked,
-              })
+                ...chapterInfo,
+                [e.target.name]: e.target.checked,
+            })
             : setChapterInfo({
-                  ...chapterInfo,
-                  [e.target.name]: e.target.value,
-              });
+                ...chapterInfo,
+                [e.target.name]: e.target.value,
+            });
     };
 
     const submitChapter = (e) => {
@@ -117,14 +103,8 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
         updateChapter({ ...chapterInfo, articleId, chapterId, content: raw });
     };
 
-    const compositeDecorator = new CompositeDecorator([
-        {
-            strategy: findFootnoteEntities,
-            component: FootnoteSpan,
-        },
-    ]);
     const toolbar = {
-        options: ["inline", "blockType", "list", "link", "image", "remove", "history"],
+        options: ["inline", "blockType", "list", "image", "remove", "history"],
         inline: { options: ["bold", "italic"] },
         blockType: { options: ["Blockquote"], inDropdown: false },
         list: { options: ["unordered", "ordered"] },
@@ -157,9 +137,7 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
                 if (document.getElementById("chapter-identifier")) document.getElementById("chapter-identifier").innerHTML = `新章节`;
             }
             const fetchedContentState = fetchedContent ? convertFromRaw(fetchedContent) : EditorState.createEmpty().getCurrentContent();
-            fetchedContentState.createEntity("FOOTNOTE", "MUTABLE", { comment: "", source: "", page: "" });
-            setFootnoteKey(fetchedContentState.getLastCreatedEntityKey());
-            setEditorState(EditorState.createWithContent(fetchedContentState, compositeDecorator));
+            setEditorState(EditorState.createWithContent(fetchedContentState));
         }
     }, [focusArticle]);
 
@@ -225,7 +203,7 @@ const ChapterEdit = ({ alerts, setSection, setRedirect, setAlert, clearAlert, fo
                                                         editorClassName="rdw-editor"
                                                         onEditorStateChange={onChange}
                                                         toolbar={toolbar}
-                                                        toolbarCustomButtons={[<CustomOption footnoteKey={footnoteKey} />]}
+                                                        toolbarCustomButtons={[<Footnote />]}
                                                         localization={{
                                                             locale: "zh",
                                                         }}

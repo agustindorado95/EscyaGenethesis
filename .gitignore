@@ -106,3 +106,5 @@ dist
 /client/public/avatars
 !/client/public/avatars/default.jpg
 /client/public/signatures
+
+**/.DS_Store
